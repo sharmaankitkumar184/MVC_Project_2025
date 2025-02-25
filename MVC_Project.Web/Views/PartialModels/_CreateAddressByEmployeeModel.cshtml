@@ -1,0 +1,80 @@
+﻿@model MVC_Project.Models.Models.Address
+
+
+<!-- Bootstrap Modal for Adding Address -->
+<div class="modal fade" id="addAddressModal" tabindex="1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAddressForm">
+                    <div class="mb-3">
+                        <label asp-for="Street" class="form-label">Street</label>
+                        <input asp-for="Street" type="text" id="street" class="form-control" required />
+                        <span asp-validation-for="Street" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="City" class="form-label">City</label>
+                        <input asp-for="City" type="text" id="city" class="form-control" required />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="State" class="form-label">State</label>
+                        <input asp-for="State" type="text" id="state" class="form-control" required />
+                        <span asp-validation-for="State" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ZipCode" class="form-label">Zip Code</label>
+                        <input asp-for="ZipCode" type="text" id="zipCode" class="form-control" required />
+                        <span asp-validation-for="ZipCode" class="text-danger"></span>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="saveAddressBtn">Save Address</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).on("click", "#saveAddressBtn", function () {
+        var newAddress = {
+            Street: $("#street").val().trim(),
+            City: $("#city").val().trim(),
+            State: $("#state").val().trim(),
+            ZipCode: $("#zipCode").val().trim()
+        };
+
+        $.ajax({
+            url: "/Address/Create",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(newAddress),
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    // Add the new address to the dropdown list
+                    var addressDropdown = $("select[name='AddressId']");
+                    addressDropdown.append(new Option(response.addressText, response.addressId));
+
+                    // Set the newly added address as selected
+                    addressDropdown.val(response.addressId).change();
+
+                    // Hide the modal and reset the form
+                    $("#addAddressModal").modal("hide");
+                    $("#addAddressForm")[0].reset();
+                } else {
+                    alert("Validation failed: \n" + (response.errors ? response.errors.join("\n") : "Unknown error"));
+                }
+            },
+            error: function (xhr) {
+                console.log("AJAX Error:", xhr.responseText);
+            }
+        });
+    });
+
+</script>

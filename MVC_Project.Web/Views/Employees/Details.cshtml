@@ -1,0 +1,256 @@
+﻿@model MVC_Project.Models.Models.Employee
+
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<!-- Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Background Image and Styling -->
+<style>
+    body {
+        background-color: #f4f6f9;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        margin-top: 30px;
+        padding: 20px;
+        max-width: 1200px;
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #4e73df;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 1.5rem;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .card-body {
+        padding: 20px;
+        background-color: white;
+    }
+
+    .card-footer {
+        background-color: #f1f1f1;
+        text-align: center;
+        padding: 15px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border: none;
+    }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+    .btn-show-more {
+        width: 100%;
+        margin-top: 20px;
+        transition: all 0.3s;
+    }
+
+        .btn-show-more:hover {
+            background-color: #138496;
+            transform: translateY(-3px);
+        }
+
+    .section-divider {
+        border-top: 2px solid #ddd;
+        margin: 30px 0;
+    }
+
+    .section-header {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #4e73df;
+        padding-bottom: 10px;
+    }
+
+    .section-content dl {
+        margin-left: 0;
+    }
+
+    .show-more-content {
+        display: none;
+    }
+</style>
+
+<div class="container">
+    <h1 class="text-center mb-5 text-primary">Employee Details</h1>
+
+    <!-- Employee Information Section -->
+    <div class="card">
+        <div class="card-header">
+            Employee Information
+        </div>
+        <div class="card-body">
+            <div class="section-content">
+                <dl class="row">
+                    <dt class="col-sm-4"><i class="fas fa-user"></i> Full Name</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Name)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-id-badge"></i> Employee Code</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.EmployeeCode)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-calendar-alt"></i> Date Of Birth</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.DateOfBirth)</dd>
+                </dl>
+            </div>
+            <button class="btn btn-info btn-sm btn-show-more" id="showMoreEmployeeBtn">Show More</button>
+            <div id="moreEmployeeInfo" class="show-more-content">
+                <dl class="row mt-3">
+                    <dt class="col-sm-4"><i class="fas fa-venus-mars"></i> Gender</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Gender)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-phone"></i> Phone</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Phone)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-envelope"></i> Email</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Email)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Department Section -->
+    <div class="card">
+        <div class="card-header">
+            Department Information
+        </div>
+        <div class="card-body">
+            <div class="section-content">
+                <dl class="row">
+                    <dt class="col-sm-4"><i class="fas fa-briefcase"></i> Department Name</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Department.Name)</dd>
+                </dl>
+            </div>
+            <button class="btn btn-info btn-sm btn-show-more" id="showMoreDepartmentBtn">Show More</button>
+            <div id="moreDepartmentInfo" class="show-more-content">
+                <dl class="row mt-3">
+                    <dt class="col-sm-4"><i class="fas fa-info-circle"></i> Description</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Department.Description)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Address Section -->
+    <div class="card">
+        <div class="card-header">
+            Address Information
+        </div>
+        <div class="card-body">
+            <div class="section-content">
+                <dl class="row">
+                    <dt class="col-sm-4"><i class="fas fa-city"></i> City</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Address.City)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-home"></i> State</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Address.State)</dd>
+                </dl>
+            </div>
+            <button class="btn btn-info btn-sm btn-show-more" id="showMoreAddressBtn">Show More</button>
+            <div id="moreAddressInfo" class="show-more-content">
+                <dl class="row mt-3">
+                    <dt class="col-sm-4"><i class="fas fa-road"></i> Street</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Address.Street)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-map-pin"></i> Zip Code</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Address.ZipCode)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Salary Section -->
+    <div class="card">
+        <div class="card-header">
+            Salary Information
+        </div>
+        <div class="card-body">
+            <div class="section-content">
+                <dl class="row">
+                    <dt class="col-sm-4"><i class="fas fa-money-bill-wave"></i> Basic Salary</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Salary.BaseSalary)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-wallet"></i> Net Salary</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Salary.NetSalary)</dd>
+                </dl>
+            </div>
+            <button class="btn btn-info btn-sm btn-show-more" id="showMoreSalaryBtn">Show More</button>
+            <div id="moreSalaryInfo" class="show-more-content">
+                <dl class="row mt-3">
+                    <dt class="col-sm-4"><i class="fas fa-percentage"></i> Bonus</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Salary.Bonus)</dd>
+
+                    <dt class="col-sm-4"><i class="fas fa-percentage"></i> Deductions</dt>
+                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Salary.Deductions)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Footer Buttons -->
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary w-100 mb-2">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary w-100">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<!-- jQuery for Show More functionality -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Toggle Show More for Employee Info
+        $("#showMoreEmployeeBtn").click(function () {
+            $("#moreEmployeeInfo").toggle();
+            $(this).text($(this).text() == 'Show More' ? 'Show Less' : 'Show More');
+        });
+
+        // Toggle Show More for Department Info
+        $("#showMoreDepartmentBtn").click(function () {
+            $("#moreDepartmentInfo").toggle();
+            $(this).text($(this).text() == 'Show More' ? 'Show Less' : 'Show More');
+        });
+
+        // Toggle Show More for Address Info
+        $("#showMoreAddressBtn").click(function () {
+            $("#moreAddressInfo").toggle();
+            $(this).text($(this).text() == 'Show More' ? 'Show Less' : 'Show More');
+        });
+
+        // Toggle Show More for Salary Info
+        $("#showMoreSalaryBtn").click(function () {
+            $("#moreSalaryInfo").toggle();
+            $(this).text($(this).text() == 'Show More' ? 'Show Less' : 'Show More');
+        });
+    });
+</script>
