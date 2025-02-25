@@ -1,0 +1,103 @@
+﻿@model IEnumerable<MVC_Project.Models.Models.Employee>
+
+@{
+    ViewData["Title"] = "Employee List";
+    var searchedData = ViewBag.SearchedEmployeeData as IEnumerable<MVC_Project.Models.Models.Employee>;
+    var employeeList = searchedData ?? Model; // Use searchedData if available, otherwise use Model
+    bool isSearchActive = searchedData != null; // Check if a search was performed
+}
+
+<h1 class="text-center my-4">Employee List</h1>
+
+<div class="container">
+    <!-- Search Box -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6">
+            <form class="d-flex justify-content-center align-items-center" asp-action="Search" id="searchForm">
+                <div class="input-group">
+                    <input class="form-control" type="text" name="empName" id="searchInput"
+                           placeholder="Search Employees" aria-label="Search" value="@ViewBag.SearchQuery">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="clearSearch">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create New Employee Button -->
+    <div class="text-center mb-4">
+        <a asp-action="Create" class="btn btn-success btn-lg">Create New Employee</a>
+    </div>
+
+    <!-- Show message if no employees found -->
+    @if (isSearchActive && !employeeList.Any())
+    {
+        <div class="alert alert-warning text-center">
+            <strong>No employees found.</strong> Try searching with a different name.
+        </div>
+    }
+    else
+    {
+        <!-- Employee List -->
+        <div class="row">
+            @foreach (var item in employeeList)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">ID: @Html.DisplayFor(modelItem => item.EmployeeCode)</h6>
+
+                            <p class="card-text">
+                                <strong>Date of Birth:</strong> @item.DateOfBirth.ToString("dd-MMM-yyyy")
+                            </p>
+
+                            <p class="card-text">
+                                <strong>Email:</strong> @(string.IsNullOrEmpty(item.Email) ? "N/A" : item.Email)
+                            </p>
+
+                            <p class="card-text">
+                                <strong>Phone:</strong> @(string.IsNullOrEmpty(item.Phone) ? "N/A" : item.Phone)
+                            </p>
+
+                            <p class="card-text">
+                                <strong>Department:</strong> @(item.Department != null ? item.Department.Name : "N/A")
+                            </p>
+
+                            <p class="card-text">
+                                <strong>Address:</strong>
+                                @(item.Address != null ? $"{item.Address.Street}, {item.Address.City}, {item.Address.ZipCode}" : "N/A")
+                            </p>
+
+                            <p class="card-text">
+                                <strong>Salary:</strong> @(item.Salary != null ? $"${item.Salary.NetSalary:F2}" : "N/A")
+                            </p>
+
+                            <div class="d-flex justify-content-between">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("searchInput");
+            const clearButton = document.getElementById("clearSearch");
+
+            clearButton.addEventListener("click", function () {
+                searchInput.value = ""; // Clear input field
+                window.location.href = '@Url.Action("Index")'; // Reset and reload page
+            });
+        });
+    </script>
+}

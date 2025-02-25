@@ -1,0 +1,103 @@
+﻿@using MVC_Project.Models.Models
+@model MVC_Project.Models.Models.Employee
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+<div class="container mt-5 mb-5">
+    <h1 class="text-center text-primary mb-4">Edit Employee</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Employee Information</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <!-- Hidden Id Field -->
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Name -->
+                        <div class="form-group mb-4">
+                            <label asp-for="Name" class="form-label">Full Name</label>
+                            <input asp-for="Name" class="form-control shadow-sm" placeholder="Enter employee name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <!-- Employee Code -->
+                        <div class="form-group mb-4">
+                            <label asp-for="EmployeeCode" class="form-label">Employee Code</label>
+                            <input asp-for="EmployeeCode" class="form-control shadow-sm" placeholder="Enter employee code" />
+                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group mb-4">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" type="email" class="form-control shadow-sm" placeholder="Enter email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group mb-4">
+                            <label asp-for="Phone" class="form-label">Phone</label>
+                            <input asp-for="Phone" class="form-control shadow-sm" placeholder="Enter phone number" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="form-group mb-4">
+                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                            <input asp-for="DateOfBirth" type="date" class="form-control shadow-sm" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="form-group mb-4">
+                            <label asp-for="Gender" class="form-label">Gender</label>
+                            <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-select shadow-sm">
+                                <option value="">Select Gender</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="form-group mb-4">
+                            <label asp-for="DepartmentId" class="form-label">Department</label>
+                            <select asp-for="DepartmentId" class="form-select shadow-sm" asp-items="ViewBag.Departments">
+                                <option value="">Select Department</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group mb-4">
+                            <label asp-for="AddressId" class="form-label">Address</label>
+                            <select asp-for="AddressId" class="form-select shadow-sm" asp-items="ViewBag.Addresses">
+                                <option value="">Select Address</option>
+                            </select>
+                            <span asp-validation-for="AddressId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <button type="submit" class="btn btn-primary w-100 shadow-sm">Save</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center pt-3 pb-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

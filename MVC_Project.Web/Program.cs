@@ -1,9 +1,29 @@
+using Microsoft.EntityFrameworkCore;
+using MVC_Project.Services.Data;
+using MVC_Project.Services.Repositories;
+using MVC_Project.Services.Repositories.IRepository;
+using System;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Enable nullable reference types context
+#nullable enable // Enable nullable context to avoid warnings
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddTransient<IAddressRepository, AddressRepository>();
+
+//Entity Database connectivity
+var ConnectionString = builder.Configuration.GetConnectionString("MVCPracticeDB");
+builder.Services.AddDbContext<ApplicationDbContext>(option =>
+option.UseSqlServer(ConnectionString)
+);
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -22,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Employees}/{action=Index}/{id?}");
 
 app.Run();
