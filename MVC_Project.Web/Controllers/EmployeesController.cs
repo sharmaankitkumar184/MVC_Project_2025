@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.Models.Models;
 using MVC_Project.Services.Repositories.IRepository;
+using System.Drawing.Printing;
+using X.PagedList.Extensions;
 
 namespace MVC_Project.Web.Controllers
 {
@@ -21,10 +23,17 @@ namespace MVC_Project.Web.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page, int pageSize = 9)
         {
-            
-            var employees = await _emprepo.GetAllEmployee();
+
+            int pageNumber = page ?? 1; // Default to first page
+
+            var employeesQuery = await _emprepo.GetAllEmployee(); // Await the result
+
+            var employees = employeesQuery
+                .OrderBy(e => e.Id)
+                .ToPagedList(pageNumber, pageSize); // Use ToPagedList (not async, since it's already awaited)
+            ViewBag.PageSize = pageSize; // Pass page size to the view
             return View(employees);
         }
 
@@ -135,17 +144,22 @@ namespace MVC_Project.Web.Controllers
         }
 
         // POST: Employees/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search(string empName)
+        [HttpGet, HttpPost]
+        public async Task<IActionResult> Search(int? page, string empName, int pageSize = 9)
         {
             if (ModelState.IsValid)
             {
-                ViewBag.SearchQuery = empName; // Store search input in ViewBag
-                var SearchedEmployee=await _emprepo.SearchEmployee(empName);
-                ViewBag.SearchedEmployeeData = SearchedEmployee.Any() ? SearchedEmployee : new List<Employee>();
-                return View("Index");
+                int pageNumber = page ?? 1; // Default to first page
+                ViewBag.SearchQuery = empName;
+
+                var searchedEmployee = await _emprepo.SearchEmployee(empName);
+                var pagedResult = searchedEmployee.OrderBy(e => e.Id).ToPagedList(pageNumber, pageSize);
+
+                ViewBag.PageSize = pageSize;
+
+                return View("Index", pagedResult); // ✅ Important: pass model here
             }
+
             return RedirectToAction(nameof(Index));
         }
 
