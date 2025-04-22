@@ -3,6 +3,7 @@ using MVC_Project.Models.Models;
 using MVC_Project.Services.Data;
 using MVC_Project.Services.Repositories.IRepository;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MVC_Project.Services.Repositories
 {
@@ -15,10 +16,10 @@ namespace MVC_Project.Services.Repositories
         {
             _db = db;
         }
-        public async Task<IEnumerable<Employee>> GetAllEmployee()
+        public async Task<IQueryable<Employee>> GetAllEmployee()
         {
 
-            return await Task.FromResult(_db.Employees.Include(e => e.Department).Include(f=>f.Address).Include(s => s.Salary).ToList());
+            return await Task.FromResult(_db.Employees.Include(e => e.Department).Include(f=>f.Address).Include(s => s.Salary).AsQueryable());
 
         }
 
@@ -83,15 +84,15 @@ namespace MVC_Project.Services.Repositories
             return _db.Employees.Any(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<Employee?>> SearchEmployee(string empName)
+        public async Task<IQueryable<Employee?>> SearchEmployee(string empName)
         {
             if(empName == null)
             {
                 throw new ArgumentNullException(nameof(empName), "Employee name cannot be null");
             }
-            IList<Employee> employee = await _db.Employees
-                                .Where(e => e.Name.ToLower().Contains(empName.ToLower())).ToListAsync();
-            return employee;
+            return await Task.FromResult(_db.Employees
+                                .Where(e => e.Name.ToLower().Contains(empName.ToLower())).AsQueryable());
+
         }
 
     }

@@ -1,10 +1,12 @@
-﻿@model IEnumerable<MVC_Project.Models.Models.Employee>
+﻿@model X.PagedList.IPagedList<MVC_Project.Models.Models.Employee>
+@using X.PagedList.Mvc.Core
 
 @{
     ViewData["Title"] = "Employee List";
-    var searchedData = ViewBag.SearchedEmployeeData as IEnumerable<MVC_Project.Models.Models.Employee>;
-    var employeeList = searchedData ?? Model; // Use searchedData if available, otherwise use Model
-    bool isSearchActive = searchedData != null; // Check if a search was performed
+
+    var employeeList = Model;
+    bool isSearchActive = !string.IsNullOrEmpty(ViewBag.SearchQuery as string);
+
 }
 
 <h1 class="text-center my-4">Employee List</h1>
@@ -87,6 +89,56 @@
         </div>
     }
 </div>
+<!-- Pagination + Page Size UI -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <!-- Page Size Buttons -->
+    <div class="d-flex align-items-center gap-2">
+        <span class="fw-semibold text-secondary">Page Size:</span>
+        @foreach (var size in new int[] { 3, 6, 9, 12 })
+        {
+            <button class="btn btn-outline-primary btn-sm @(ViewBag.PageSize == size ? "active" : "")"
+                    onclick="changePageSize('@(ViewBag.SearchQuery ?? "")', @(size))">
+                @size
+            </button>
+
+        }
+    </div>
+</div>
+
+<!-- Pagination at Bottom -->
+<div class="d-flex justify-content-center mt-3">
+    @{
+        var renderOptions = new PagedListRenderOptions
+            {
+                UlElementClasses = new[] { "pagination", "justify-content-center" },
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" },
+                ActiveLiElementClass = "active"
+            };
+    }
+@* // Render the pagination links *@
+    @if (isSearchActive)
+    {
+        @Html.PagedListPager(Model, page => Url.Action("Search", new
+            {
+                page,
+                empName = ViewBag.SearchQuery,
+                pageSize = ViewBag.PageSize
+            }), renderOptions)
+    }
+    else
+    {
+        @Html.PagedListPager(Model, page => Url.Action("Index", new
+            {
+                page,
+                pageSize = ViewBag.PageSize
+            }), renderOptions)
+    }
+
+
+</div>
+
 
 @section Scripts {
     <script>
@@ -99,5 +151,29 @@
                 window.location.href = '@Url.Action("Index")'; // Reset and reload page
             });
         });
+        var isSearchActive = @isSearchActive.ToString().ToLower();
+
+
+        console.log("isSearchActive Value:", isSearchActive);  // ✅ Debugging Output
+
+        // JavaScript to Handle Page Size Change
+        function changePageSize(empName, size) {
+            console.log("Inside changePageSize function");
+            console.log("isSearchActive:", isSearchActive);
+
+            // ✅ Get empName from input field
+            var empName = document.getElementById("searchInput") ? document.getElementById("searchInput").value.trim() : "";
+
+            if (isSearchActive) {  // ✅ Works correctly as a Boolean now
+                var url = '@Url.Action("Search", new { page = 1 })' + '&empName=' + encodeURIComponent(empName) + '&pageSize=' + size;
+                console.log("Redirecting to search:", url);
+                window.location.href = url;
+            } else {
+                var url = '@Url.Action("Index", new { page = 1 })' + '&pageSize=' + size;
+                console.log("Redirecting to:", url);
+                window.location.href = url;
+            }
+        }
+
     </script>
 }

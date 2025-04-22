@@ -10,11 +10,11 @@ namespace MVC_Project.Services.Repositories.IRepository
     public interface IEmployeeRepository
     {
 
-        Task<IEnumerable<Employee>> GetAllEmployee();
+        Task<IQueryable<Employee>> GetAllEmployee();
         Task<Employee?> GetEmployeeById(int? id);
         Task<Employee> AddEmployee(Employee employee);
         Task<Employee> EditEmployee(int? id,Employee employee);
         Task<Employee> DeleteEmployee(int? id);
-        Task<IEnumerable<Employee>?> SearchEmployee(string empName);
+        Task<IQueryable<Employee>?> SearchEmployee(string empName);
     }
 }
