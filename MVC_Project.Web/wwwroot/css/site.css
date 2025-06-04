@@ -18,5 +18,107 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+        margin: 0;
+    padding: 0;
+}
+
+.card-body {
+    background-color: #e6f4ea!important;
+}
+
+/*dark mode command light mode style form navigation*/
+
+.custom-body-style {
+    background-color: #3f765c !important;
+}
+/* Dark mode styles Navigation*/
+.custom-navbar-dark {
+    background-color: #445c50 !important; /* dark gray (darker than body) */
+    color: #eaeaea;
+    box-shadow: 0 2px 4px rgba(255,255,255,0.1); /* for dark mode */
+}
+
+.custom-navbar-light {
+    background-color: #ebb2b2 !important; /* light gray */
+    color: #2c3b51;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* for light mode */
+}
+
+.custom-navlink-dark {
+    color: #eaeaea !important;
+}
+
+.custom-navlink-light {
+    color: #2c3b51 !important;
+}
+
+.custom-navbar-brand-dark {
+    color: #eaeaea !important;
+}
+.custom-navbar-brand-light {
+    color: #2c3b51 !important;
+}
+/*END Dark mode styles Navigation*/
+
+/*Footer Dark mode styles */
+.custom-mainfooter-dark {
+    background-color: #5c985f !important; /* dark gray (darker than body) */
+    color: #eaeaea;
+    box-shadow: 0 2px 4px rgba(255,255,255,0.1); /* for dark mode */
+}
+
+.custom-mainfooter-light {
+    background-color: #ebb2b2 !important; /* light gray */
+    color: #2c3b51;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* for light mode */
+}
+/* Footer Links */
+.custom-footer-link-light {
+    color: #2c3b51 !important;
+}
+
+.custom-footer-link-dark
+ {
+   color: #f8f9fa !important;
+}
+
+
+.custom-footer-social-links-light {
+    color: #2c3b51 !important;
+}
+
+.custom-footer-social-links-dark {
+    color: #f8f9fa !important;
+}
+
+/*End footer styling*/
+/*Page button styling*/
+.custom-page-light {
+    background-color: white;
+    color: #0d6efd;
+    border: 1px solid #0d6efd;
+}
+
+.custom-page-dark {
+    background-color: #fff;
+    color: #1e6243;
+    border: 2px solid green;
+}
+
+.custom-page-active {
+    background-color: #0d6efd !important;
+    color: floralwhite !important;
+    border-color: white !important;
+}
+.custom-page-text-style-dark
+{
+    color:aliceblue!important;
+}
+.custom-page-text-style-light {
+    color: #2c3b51 !important;
+}
+
+/*End Page button styling*/
+#themeLabel, #themeSwitch {
+    cursor: pointer;
 }

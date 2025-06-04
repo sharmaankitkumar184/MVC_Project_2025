@@ -1,8 +1,8 @@
 ﻿<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg shadow-sm" id="mainNavbar">
         <div class="container">
             <!-- Brand Name / Logo -->
-            <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+            <a class="navbar-brand fw-bold" id="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
                 <i class="bi bi-house-door-fill"></i> MVC_Project.Web
             </a>
 
@@ -14,37 +14,45 @@
 
             <!-- Navbar Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Homepage">
                             <i class="bi bi-house-door"></i> Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Employees" asp-action="Index">
+                        <a class="nav-link" asp-area="" asp-controller="Employees" asp-action="Index">
                             <i class="bi bi-people"></i> Employees
                         </a>
                     </li>
 
                     <!-- Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="servicesDropdown" role="button"
+                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-gear"></i> Services
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Services" asp-action="Consulting">Consulting</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Services" asp-action="Development">Development</a></li>
-                            <li><a class="dropdown-item" asp-area="" asp-controller="Services" asp-action="Support">Support</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" asp-controller="Services" asp-action="Consulting">Consulting</a></li>
+                            <li><a class="dropdown-item" asp-controller="Services" asp-action="Development">Development</a></li>
+                            <li><a class="dropdown-item" asp-controller="Services" asp-action="Support">Support</a></li>
                         </ul>
                     </li>
 
-                    <!-- Search Bar -->
-                    <li class="nav-item d-flex align-items-center">
-                        <form class="d-flex">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-light" type="submit"><i class="bi bi-search"></i></button>
+                    <!-- Search -->
+                    <li class="nav-item d-none d-lg-block ms-3">
+                        <form class="d-flex" asp-controller="Employees" asp-action="Search">
+                            <input class="form-control form-control-sm me-2" type="search" name="empName" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-secondary btn-sm" type="submit"><i class="bi bi-search"></i></button>
                         </form>
+                    </li>
+
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item ms-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="themeSwitch">
+                            <label class="form-check-label" for="themeSwitch" id="themeLabel">Light Mode</label>
+                        </div>
                     </li>
                 </ul>
             </div>

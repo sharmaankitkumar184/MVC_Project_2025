@@ -153,6 +153,11 @@ namespace MVC_Project.Web.Controllers
                 ViewBag.SearchQuery = empName;
 
                 var searchedEmployee = await _emprepo.SearchEmployee(empName);
+
+                if(searchedEmployee == null)
+                {
+                    return NotFound();
+                }
                 var pagedResult = searchedEmployee.OrderBy(e => e.Id).ToPagedList(pageNumber, pageSize);
 
                 ViewBag.PageSize = pageSize;
