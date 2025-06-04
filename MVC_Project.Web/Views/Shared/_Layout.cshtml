@@ -45,5 +45,70 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 
+    <script>
+        const themeSwitch = document.getElementById("themeSwitch");
+        const navbar = document.getElementById("mainNavbar");
+        const mainfooter = document.getElementById("mainFooter");
+        const themeLabel = document.getElementById("themeLabel");
+        const navlinks = document.getElementsByClassName("nav-link");
+        const navbrandname = document.getElementById("navbar-brand");
+        const footerHeader = document.getElementById("footerHeader");
+        const footerSocialLinks = document.getElementsByClassName("footer-Social-Links");
+        const quickfooterlinks = document.getElementsByClassName("quick-Links-Footer");
+        const pagetextstyle = document.getElementById("page-text-style");
+        
+
+        function setTheme(isDark) {
+            document.body.classList.toggle("custom-body-style", isDark);
+            document.body.classList.toggle("text-white", isDark);
+            navbar.classList.toggle("custom-navbar-dark", isDark);
+            navbar.classList.toggle("custom-navbar-light", !isDark);
+            navbrandname.classList.toggle("custom-navbar-brand-dark", isDark);
+            navbrandname.classList.toggle("custom-navbar-brand-light", !isDark);
+
+            mainfooter.classList.toggle("custom-mainfooter-dark", isDark);
+            mainfooter.classList.toggle("custom-mainfooter-light", !isDark);
+            footerHeader.classList.toggle("footer-Header-dark", isDark);
+            footerHeader.classList.toggle("footer-Header-light", !isDark);
+            pagetextstyle.classList.toggle("custom-page-text-style-dark", isDark);
+            pagetextstyle.classList.toggle("custom-page-text-style-light", !isDark);
+            themeLabel.textContent = isDark ? "Dark Mode" : "Light Mode";
+
+            for (let link of navlinks) {
+                link.classList.toggle("custom-navlink-dark", isDark);
+                link.classList.toggle("custom-navlink-light", !isDark);
+            }
+
+            for (let flink of footerSocialLinks) {
+                flink.classList.toggle("custom-footer-social-links-dark", isDark);
+                flink.classList.toggle("custom-footer-social-links-light", !isDark);
+            }
+            for (let qflink of quickfooterlinks) {
+                qflink.classList.toggle("custom-footer-link-dark", isDark);
+                qflink.classList.toggle("custom-footer-link-light", !isDark);
+            }
+            //added style foe page button style
+            const pageSizeButtons = document.querySelectorAll(".page-size-button");
+            pageSizeButtons.forEach(button => {
+                button.classList.toggle("custom-page-dark", isDark);
+                button.classList.toggle("custom-page-light", !isDark);
+            });
+        }
+       
+        themeSwitch.addEventListener("change", () => {
+            const isDark = themeSwitch.checked;
+            setTheme(isDark);
+            localStorage.setItem("isDarkMode", isDark);
+        });
+
+        // Load saved mode
+        window.addEventListener("DOMContentLoaded", () => {
+            const savedMode = localStorage.getItem("isDarkMode") === "true";
+            themeSwitch.checked = savedMode;
+            setTheme(savedMode);
+        });
+    </script>
+
+
 </body>
 </html>

@@ -93,14 +93,15 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
 
     <!-- Page Size Buttons -->
-    <div class="d-flex align-items-center gap-2">
-        <span class="fw-semibold text-secondary">Page Size:</span>
+    <div class="d-flex align-items-center gap-2" >
+        <span class="fw-semibold text-secondary" id="page-text-style">Page Size:</span>
         @foreach (var size in new int[] { 3, 6, 9, 12 })
         {
-            <button class="btn btn-outline-primary btn-sm @(ViewBag.PageSize == size ? "active" : "")"
+            <button class="btn page-size-button @(ViewBag.PageSize == size ? "custom-page-active" : "")"
                     onclick="changePageSize('@(ViewBag.SearchQuery ?? "")', @(size))">
                 @size
             </button>
+
 
         }
     </div>
