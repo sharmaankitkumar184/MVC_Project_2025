@@ -94,18 +94,19 @@
                 button.classList.toggle("custom-page-light", !isDark);
             });
         }
-       
-        themeSwitch.addEventListener("change", () => {
-            const isDark = themeSwitch.checked;
-            setTheme(isDark);
-            localStorage.setItem("isDarkMode", isDark);
-        });
 
-        // Load saved mode
+        // ✅ Apply theme on every page load
         window.addEventListener("DOMContentLoaded", () => {
             const savedMode = localStorage.getItem("isDarkMode") === "true";
-            themeSwitch.checked = savedMode;
+            themeSwitch && (themeSwitch.checked = savedMode);
             setTheme(savedMode);
+        });
+
+        // ✅ Allow changing mode
+        themeSwitch?.addEventListener("change", () => {
+            const isDark = themeSwitch.checked;
+            localStorage.setItem("isDarkMode", isDark);
+            setTheme(isDark);
         });
     </script>
 
