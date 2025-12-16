@@ -56,43 +56,69 @@
         const footerSocialLinks = document.getElementsByClassName("footer-Social-Links");
         const quickfooterlinks = document.getElementsByClassName("quick-Links-Footer");
         const pagetextstyle = document.getElementById("page-text-style");
-        
+
 
         function setTheme(isDark) {
-            document.body.classList.toggle("custom-body-style", isDark);
+            document.body.classList.toggle("custom-dark-body-style", isDark);
             document.body.classList.toggle("text-white", isDark);
-            navbar.classList.toggle("custom-navbar-dark", isDark);
-            navbar.classList.toggle("custom-navbar-light", !isDark);
-            navbrandname.classList.toggle("custom-navbar-brand-dark", isDark);
-            navbrandname.classList.toggle("custom-navbar-brand-light", !isDark);
 
-            mainfooter.classList.toggle("custom-mainfooter-dark", isDark);
-            mainfooter.classList.toggle("custom-mainfooter-light", !isDark);
-            footerHeader.classList.toggle("footer-Header-dark", isDark);
-            footerHeader.classList.toggle("footer-Header-light", !isDark);
-            pagetextstyle.classList.toggle("custom-page-text-style-dark", isDark);
-            pagetextstyle.classList.toggle("custom-page-text-style-light", !isDark);
-            themeLabel.textContent = isDark ? "Dark Mode" : "Light Mode";
-
-            for (let link of navlinks) {
-                link.classList.toggle("custom-navlink-dark", isDark);
-                link.classList.toggle("custom-navlink-light", !isDark);
+            if (navbar) {
+                navbar.classList.toggle("custom-navbar-dark", isDark);
+                navbar.classList.toggle("custom-navbar-light", !isDark);
             }
 
-            for (let flink of footerSocialLinks) {
-                flink.classList.toggle("custom-footer-social-links-dark", isDark);
-                flink.classList.toggle("custom-footer-social-links-light", !isDark);
+            if (navbrandname) {
+                navbrandname.classList.toggle("custom-navbar-brand-dark", isDark);
+                navbrandname.classList.toggle("custom-navbar-brand-light", !isDark);
             }
-            for (let qflink of quickfooterlinks) {
-                qflink.classList.toggle("custom-footer-link-dark", isDark);
-                qflink.classList.toggle("custom-footer-link-light", !isDark);
+
+            if (mainfooter) {
+                mainfooter.classList.toggle("custom-mainfooter-dark", isDark);
+                mainfooter.classList.toggle("custom-mainfooter-light", !isDark);
             }
-            //added style foe page button style
+
+            if (footerHeader) {
+                footerHeader.classList.toggle("footer-Header-dark", isDark);
+                footerHeader.classList.toggle("footer-Header-light", !isDark);
+            }
+
+            if (pagetextstyle) {
+                pagetextstyle.classList.toggle("custom-page-text-style-dark", isDark);
+                pagetextstyle.classList.toggle("custom-page-text-style-light", !isDark);
+            }
+
+            if (themeLabel) {
+                themeLabel.textContent = isDark ? "Dark Mode" : "Light Mode";
+            }
+
+            if (navlinks.length > 0) {
+                for (let link of navlinks) {
+                    link.classList.toggle("custom-navlink-dark", isDark);
+                    link.classList.toggle("custom-navlink-light", !isDark);
+                }
+            }
+
+            if (footerSocialLinks.length > 0) {
+                for (let flink of footerSocialLinks) {
+                    flink.classList.toggle("custom-footer-social-links-dark", isDark);
+                    flink.classList.toggle("custom-footer-social-links-light", !isDark);
+                }
+            }
+
+            if (quickfooterlinks.length > 0) {
+                for (let qflink of quickfooterlinks) {
+                    qflink.classList.toggle("custom-footer-link-dark", isDark);
+                    qflink.classList.toggle("custom-footer-link-light", !isDark);
+                }
+            }
+
             const pageSizeButtons = document.querySelectorAll(".page-size-button");
-            pageSizeButtons.forEach(button => {
-                button.classList.toggle("custom-page-dark", isDark);
-                button.classList.toggle("custom-page-light", !isDark);
-            });
+            if (pageSizeButtons.length > 0) {
+                pageSizeButtons.forEach(button => {
+                    button.classList.toggle("custom-page-dark", isDark);
+                    button.classList.toggle("custom-page-light", !isDark);
+                });
+            }
         }
 
         // ✅ Apply theme on every page load
@@ -108,6 +134,7 @@
             localStorage.setItem("isDarkMode", isDark);
             setTheme(isDark);
         });
+
     </script>
 
 
