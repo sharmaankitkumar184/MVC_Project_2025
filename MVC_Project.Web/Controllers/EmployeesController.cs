@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.Models.Models;
@@ -21,7 +22,7 @@ namespace MVC_Project.Web.Controllers
             _deptrepo = deptrepo;
             _addrepo = addrepo;
         }
-
+        [Authorize]
         // GET: Employees
         public async Task<IActionResult> Index(int? page, int pageSize = 9)
         {

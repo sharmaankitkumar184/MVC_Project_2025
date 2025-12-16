@@ -28,10 +28,19 @@ body {
 
 /*dark mode command light mode style form navigation*/
 
-.custom-body-style {
-    background-color: #3f765c !important;
+.custom-dark-body-style {
+    background-color: #242726 !important;
 }
 /* Dark mode styles Navigation*/
+.logo-svg {
+    height: 45px;
+    width: auto;
+    color: #1e90ff; /* Dodger Blue */
+    transition: color 0.3s ease-in-out;
+}
+
+
+
 .custom-navbar-dark {
     background-color: #445c50 !important; /* dark gray (darker than body) */
     color: #eaeaea;
@@ -122,3 +131,4 @@ body {
 #themeLabel, #themeSwitch {
     cursor: pointer;
 }
+

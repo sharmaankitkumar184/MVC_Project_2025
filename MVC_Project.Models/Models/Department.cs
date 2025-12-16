@@ -19,6 +19,8 @@ namespace MVC_Project.Models.Models
 
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
+
 
     }
 }

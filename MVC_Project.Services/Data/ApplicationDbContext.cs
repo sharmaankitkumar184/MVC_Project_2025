@@ -19,6 +19,10 @@ namespace MVC_Project.Services.Data
 
         public DbSet<Salaries> Salary { get; set; }
 
+        public DbSet<Project> Projects { get; set; }
+
+        public DbSet<UserData> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define Composite Key: EmployeeCode and Id

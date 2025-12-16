@@ -1,60 +1,67 @@
 ﻿<header>
-    <nav class="navbar navbar-expand-lg shadow-sm" id="mainNavbar">
-        <div class="container">
-            <!-- Brand Name / Logo -->
-            <a class="navbar-brand fw-bold" id="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-house-door-fill"></i> MVC_Project.Web
-            </a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow-sm" id="mainNavbar">
+        <!-- Left: Brand -->
+        <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Homepage" id="navbar-brand">
+            <i class="bi bi-crosshair2 fs-4 me-2"></i>
+            <span class="fs-5 fw-bold">OrgMaster</span>
+        </a>
 
-            <!-- Mobile Menu Toggle Button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <!-- ✅ Fixed: Toggler targets #navbarNav not #mainNavbar -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <!-- Navbar Links -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-lg-center">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Homepage">
-                            <i class="bi bi-house-door"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Employees" asp-action="Index">
-                            <i class="bi bi-people"></i> Employees
-                        </a>
-                    </li>
+        <!-- Navbar Links + User Section -->
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <!-- Center: Links -->
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3 gap-2">
+                <li class="nav-item">
+                    <a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Homepage"><i class="bi bi-house"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Employees" asp-action="Index"><i class="bi bi-people"></i> Employees</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-gear"></i> Services
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                        <li><a class="dropdown-item" href="/Service1">Service 1</a></li>
+                        <li><a class="dropdown-item" href="/Service2">Service 2</a></li>
+                    </ul>
+                </li>
+            </ul>
 
-                    <!-- Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-gear"></i> Services
+            <!-- Right: Theme Toggle + User Menu -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Dark Mode Toggle -->
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="themeSwitch">
+                    <label class="form-check-label ms-1" for="themeSwitch" id="themeLabel">Light Mode</label>
+                </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://i.pravatar.cc/32?img=5" alt="User" class="rounded-circle me-2" width="32" height="32">
+                            <span class="d-none d-md-inline">@User.Identity.Name</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" asp-controller="Services" asp-action="Consulting">Consulting</a></li>
-                            <li><a class="dropdown-item" asp-controller="Services" asp-action="Development">Development</a></li>
-                            <li><a class="dropdown-item" asp-controller="Services" asp-action="Support">Support</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                            <li><h6 class="dropdown-header">Welcome, @User.Identity.Name!</h6></li>
+                            <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                            <li><a class="dropdown-item" href="/Settings">Settings</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item text-danger" href="/Account/Logout">Sign out</a></li>
                         </ul>
-                    </li>
-
-                    <!-- Search -->
-                    <li class="nav-item d-none d-lg-block ms-3">
-                        <form class="d-flex" asp-controller="Employees" asp-action="Search">
-                            <input class="form-control form-control-sm me-2" type="search" name="empName" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-secondary btn-sm" type="submit"><i class="bi bi-search"></i></button>
-                        </form>
-                    </li>
-
-                    <!-- Dark Mode Toggle -->
-                    <li class="nav-item ms-3">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="themeSwitch">
-                            <label class="form-check-label" for="themeSwitch" id="themeLabel">Light Mode</label>
-                        </div>
-                    </li>
-                </ul>
+                    </div>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-in-right" ></i> Login
+                    </a>
+                }
             </div>
         </div>
     </nav>
