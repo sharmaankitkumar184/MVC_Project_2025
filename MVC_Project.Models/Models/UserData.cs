@@ -17,8 +17,9 @@ namespace MVC_Project.Models.Models
         [Required, StringLength(20)]
         public string Username { get; set; }
 
-        [Required, DataType(DataType.Password)]
-        public string Password { get; set; }
+        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.Password)]
+        public string PasswordHash { get; set; }
 
         [Phone]
         public string PhoneNumber { get; set; }
@@ -28,5 +29,15 @@ namespace MVC_Project.Models.Models
 
         [DataType(DataType.DateTime)]
         public DateTime DateOfRegister { get; set; } = DateTime.Now;
+
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+
+    }
+    public enum LoginResult
+    {
+        Success,
+        EmailNotFound,
+        InvalidPassword
     }
 }

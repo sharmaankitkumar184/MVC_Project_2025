@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Reset Link Expired";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-4 mt-5">
+            <div class="card-body p-4 text-center">
+
+                <!-- Icon -->
+                <div class="d-inline-flex align-items-center justify-content-center
+                            bg-danger bg-opacity-10 rounded-circle mb-3"
+                     style="width: 80px; height: 80px;">
+                    <i class="bi bi-exclamation-triangle-fill text-danger fs-2"></i>
+                </div>
+
+                <!-- Title -->
+                <h4 class="fw-semibold mb-2">Reset Link Expired</h4>
+
+                <!-- Message -->
+                <p class="text-muted small mb-4">
+                    The password reset link is either invalid or has expired.
+                    For security reasons, reset links are valid for a limited time.
+                </p>
+
+                <!-- Actions -->
+                <div class="d-grid gap-2">
+                    <a asp-controller="Account"
+                       asp-action="ForgotPassword"
+                       class="btn btn-primary btn-lg">
+                        <i class="bi bi-envelope me-2"></i>
+                        Request New Reset Link
+                    </a>
+
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       class="btn btn-outline-secondary">
+                        Back to Login
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

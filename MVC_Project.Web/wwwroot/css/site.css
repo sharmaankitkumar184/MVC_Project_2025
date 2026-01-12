@@ -131,4 +131,49 @@ body {
 #themeLabel, #themeSwitch {
     cursor: pointer;
 }
+/* Hide summary when no errors */
+.validation-summary-valid {
+    display: none;
+}
+
+/* Container */
+.validation-summary {
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+}
+
+/* List reset */
+.validation-summary-errors ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Each error row */
+.validation-summary-errors li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #842029;
+    margin-bottom: 0.25rem;
+}
+
+    /* Custom warning icon per message */
+    .validation-summary-errors li::before {
+        content: "\26A0"; /* ? */
+        color: #dc3545;
+        font-size: 0.85rem;
+        line-height: 1;
+    }
+
+.validation-summary-valid {
+    display: none;
+}
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+
 

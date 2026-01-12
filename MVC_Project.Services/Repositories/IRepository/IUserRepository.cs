@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MVC_Project.Models.Models;
+using MVC_Project.Models.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,13 @@ namespace MVC_Project.Services.Repositories.IRepository
     public interface IUserRepository
     {
         Task<bool> RegisterUserAsync(UserData user);
-        Task<UserData> AuthenticateUserAsync(string email, string password);
-        Task<bool> IsEmailRegisteredAsync(string email);
+        Task<(LoginResult Result, UserData User)> AuthenticateUserAsync(string email, string password);
+        Task<UserData> GetUserDetailsByEmailAsync(string email);
+
+        Task<UserData> GetUserDetailsByPhoneAsync(string PhoneNumber);
+
+        Task<UserData> GetByResetTokenAsync(string token, string email);
+
+        Task UpdateAsync(UserData user);
     }
 }
