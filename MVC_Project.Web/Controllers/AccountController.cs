@@ -1,13 +1,21 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using BCrypt.Net;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using MVC_Project.Models.Models;
 using MVC_Project.Models.ViewModel;
 using MVC_Project.Services.Repositories;
 using MVC_Project.Services.Repositories.IRepository;
+using MVC_Project.Services.Services;
+using MVC_Project.Services.Services.IService;
+using NuGet.Common;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+
 
 namespace MVC_Project.Web.Controllers
 {
@@ -15,11 +23,13 @@ namespace MVC_Project.Web.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly IConfiguration _config;
+        private readonly IEmailService _emailService;
 
-        public AccountController(IUserRepository userRepo, IConfiguration config)
+        public AccountController(IUserRepository userRepo, IConfiguration config , IEmailService emailservice)
         {
             _userRepo = userRepo;
             _config = config;
+            _emailService = emailservice;
         }
         // GET: Account/Register
         public IActionResult Register()
@@ -35,11 +45,18 @@ namespace MVC_Project.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            if (await _userRepo.IsEmailRegisteredAsync(model.Email))
+            var userexist = _userRepo.GetUserDetailsByEmailAsync(model.Email).Result;
+
+            if (userexist!=null)
             {
                 ModelState.AddModelError("Email", "This email is already registered.");
                 return View(model);
             }
+            //if (model.Password != model.ConfirmPassword)
+            //{
+            //    ModelState.AddModelError("", "Passwords do not match.");
+            //    return View();
+            //}
 
             var newUser = new UserData
             {
@@ -48,7 +65,7 @@ namespace MVC_Project.Web.Controllers
                 Username = model.Username, // or model.Email.Split('@')[0] if you're not using input
                 PhoneNumber = model.PhoneNumber,
                 Address = model.Address,
-                Password = ComputeSha256Hash(model.Password),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, workFactor: 12),
                 DateOfRegister = DateTime.Now
             };
 
@@ -71,13 +88,23 @@ namespace MVC_Project.Web.Controllers
         public async Task<IActionResult> Login(UserLoginViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
+            var result = await _userRepo.AuthenticateUserAsync(model.Email,model.Password);
 
-            var user = await _userRepo.AuthenticateUserAsync(model.Email, model.Password);
-            if (user == null)
+            if (result.Result == LoginResult.EmailNotFound)
             {
-                ModelState.AddModelError("", "Invalid login attempt.");
+                ModelState.AddModelError("Email", "This email address is not registered. Please check it or sign up.");
                 return View(model);
             }
+
+            if (result.Result == LoginResult.InvalidPassword)
+            {
+                ModelState.AddModelError("Password", "That password doesn’t match this account. Try again or reset your password.");
+                return View(model);
+            }
+
+            // SUCCESS
+            var user = result.User;
+
 
             // Create claims
             var claims = new List<Claim>
@@ -99,17 +126,143 @@ namespace MVC_Project.Web.Controllers
             return RedirectToAction("Index", "Employees");
         }
 
-        private string ComputeSha256Hash(string rawData)
-        {
-            using var sha256 = SHA256.Create();
-            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-            return Convert.ToBase64String(bytes);
-        }
-
         [Authorize]
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync("MyCookieAuth");
+            return RedirectToAction("Login");
+        }
+        
+
+    [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            // Step 1: Check if email exists
+             var userexists=  await _userRepo.GetUserDetailsByEmailAsync(email);
+            if (userexists==null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "No account found with this Email."
+                });
+            }
+
+            if (userexists!=null)
+            {
+                var token = GenerateResetToken();
+
+                userexists.PasswordResetToken = token;
+                userexists.PasswordResetTokenExpiry = DateTime.UtcNow.AddMinutes(10);
+
+                await _userRepo.UpdateAsync(userexists);
+                var baseUrl = _config["AppSettings:BaseUrl"];
+
+                var resetLink =
+                          $"{baseUrl}/Account/ResetPassword" +
+                          $"?token={WebUtility.UrlEncode(token)}" +
+                          $"&email={WebUtility.UrlEncode(email)}";
+
+
+                try
+                {
+                    await _emailService.SendPasswordResetEmail(email, resetLink);
+                }
+                catch (Exception ex)
+                {
+                    // TEMP: log the real error
+                    throw new Exception("Email sending failed: " + ex.Message);
+                }
+
+            }
+
+            // Always generic response (security)
+            return Json(new
+            {
+                success = true,
+                message = "If an account exists, a password reset link has been sent.",
+                email = email
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotEmail(string phoneNumber)
+        {
+            var user = _userRepo.GetUserDetailsByPhoneAsync(phoneNumber).Result;
+
+            if (user == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "No account found with this phone number."
+                });
+            }
+
+            // Mask email for security
+            var email = user.Email;
+            var maskedEmail = email.Substring(0, 3) + "****" + email.Substring(email.IndexOf("@"));
+
+            return Json(new
+            {
+                success = true,
+                message = $"Your registered email is {maskedEmail}"
+            });
+        }
+
+        private string GenerateResetToken()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string token, string email)
+        {
+            var user = await _userRepo.GetByResetTokenAsync(token, email);
+
+            if (user == null)
+            {
+                Console.WriteLine("User NOT FOUND");
+                return View("ResetLinkExpired");
+            }
+
+            if (user.PasswordResetTokenExpiry < DateTime.UtcNow)
+            {
+                Console.WriteLine("Token EXPIRED");
+                return View("ResetLinkExpired");
+            }
+
+            ViewBag.Token = token;
+            ViewBag.Email = email;
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword( string token,string email,string newPassword,string confirmPassword)
+        {
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "Passwords do not match.");
+                ViewBag.Token = token;
+                ViewBag.Email = email;
+                return View();
+            }
+
+            var user = await _userRepo.GetByResetTokenAsync(token, email);
+
+            if (user == null || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+                return View("ResetLinkExpired");
+
+            // ✅ Hash password with BCrypt
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+            // ✅ Clear reset token
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+
+            await _userRepo.UpdateAsync(user);
+
             return RedirectToAction("Login");
         }
 

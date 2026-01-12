@@ -1,0 +1,116 @@
+﻿<div class="modal fade" id="forgotEmailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+
+            <!-- Header -->
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Body -->
+            <form id="forgotEmailForm">
+                <div class="modal-body px-4 pt-2">
+                    <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center
+                        bg-primary bg-opacity-10 rounded-circle mb-3"
+                         style="width: 80px; height: 80px;">
+                        <i class="bi bi-shield-lock-fill text-primary fs-2"></i>
+                    </div>
+
+                    <h4 class="fw-semibold mb-2">Recover Email</h4>
+
+                    <!-- Message -->
+                    <div id="forgotEmailMessage" class="alert d-none small"></div>
+
+                    <p class="text-muted small mb-4">
+                        Enter the phone number linked to your account.
+                        We’ll help you identify your registered email securely.
+                    </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Phone Number</label>
+                        <input type="tel"
+                               name="phoneNumber"
+                               id="phoneNumber"
+                               class="form-control form-control-lg rounded-3"
+                               placeholder="e.g. 9876543210"
+                               required />
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button"
+                            class="btn btn-light px-4"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary px-4">
+                        <i class="bi bi-search me-1"></i>
+                        Find Email
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    //Script perform tasks for Submit button
+    document.getElementById("forgotEmailForm")
+        .addEventListener("submit", function (e) {
+
+            e.preventDefault();
+
+            let phone = document.getElementById("phoneNumber").value;
+            let messageBox = document.getElementById("forgotEmailMessage");
+
+            fetch('/Account/ForgotEmail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'phoneNumber=' + encodeURIComponent(phone)
+            })
+            .then(res => res.json())
+            .then(data => {
+                messageBox.classList.remove("d-none");
+
+                if (data.success) {
+                    messageBox.className = "alert alert-success";
+                    messageBox.innerText = data.message;
+                } else {
+                    messageBox.className = "alert alert-danger";
+                    messageBox.innerText = data.message;
+                }
+            });
+        });
+
+        //Script perform tasks for Clear button
+        
+          const forgotEmailModal = document.getElementById('forgotEmailModal');
+
+          forgotEmailModal.addEventListener('hidden.bs.modal', function () {
+
+        // Reset form
+        const form = forgotEmailModal.querySelector('form');
+        if (form) form.reset();
+
+        // Clear messages
+        const messageBox = forgotEmailModal.querySelector('.alert');
+        if (messageBox) {
+            messageBox.className = 'alert d-none';
+            messageBox.innerHTML = '';
+        }
+
+        // ✅ Move focus OUT of modal (IMPORTANT)
+        const triggerButton = document.querySelector('[data-bs-target="#forgotEmailModal"]');
+        if (triggerButton) {
+            triggerButton.focus();
+        }
+    });
+</script>

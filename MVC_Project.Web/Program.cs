@@ -2,6 +2,8 @@
 using MVC_Project.Services.Data;
 using MVC_Project.Services.Repositories;
 using MVC_Project.Services.Repositories.IRepository;
+using MVC_Project.Services.Services;
+using MVC_Project.Services.Services.IService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,7 @@ builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddTransient<IAddressRepository, AddressRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<HomeDashboardRepository>();
 
 builder.Services.AddAuthentication("MyCookieAuth")

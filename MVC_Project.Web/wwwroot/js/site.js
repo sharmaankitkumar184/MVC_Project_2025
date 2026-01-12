@@ -1,4 +1,19 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿
+//Validation Code
 
-// Write your JavaScript code.
+document.addEventListener("DOMContentLoaded", function () {
+
+    const summary = document.querySelector(".validation-summary-errors");
+
+    if (summary) {
+        // Show for 2 seconds
+        setTimeout(() => {
+            summary.classList.add("fade-out");
+        }, 2000);
+
+        // Remove completely after fade animation
+        setTimeout(() => {
+            summary.style.display = "none";
+        }, 2500);
+    }
+});

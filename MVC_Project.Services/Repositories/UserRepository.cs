@@ -1,17 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using MVC_Project.Models.Models;
 using MVC_Project.Services.Data;
 using MVC_Project.Services.Repositories.IRepository;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MVC_Project.Services.Repositories
 {
@@ -30,23 +21,46 @@ namespace MVC_Project.Services.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<UserData> AuthenticateUserAsync(string email, string password)
+        public async Task<(LoginResult Result, UserData User)> AuthenticateUserAsync(string email, string password)
         {
-            string hash = ComputeSha256Hash(password);
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == hash);
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+                return (LoginResult.EmailNotFound, null);
+
+            bool isValid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
+
+            if (!isValid)
+                return (LoginResult.InvalidPassword, null);
+
+            return (LoginResult.Success, user);
         }
 
-        public async Task<bool> IsEmailRegisteredAsync(string email)
+
+        public async Task<UserData> GetUserDetailsByEmailAsync(string email)
         {
-            return await _context.Users.AnyAsync(u => u.Email == email);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        private string ComputeSha256Hash(string rawData)
+        public async Task<UserData> GetUserDetailsByPhoneAsync(string PhoneNumber)
         {
-            using var sha256 = SHA256.Create();
-            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawData));
-            return Convert.ToBase64String(bytes);
+            return await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == PhoneNumber);
         }
-      
+
+        public async Task<UserData> GetByResetTokenAsync(string token, string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u =>
+                u.Email == email &&
+                u.PasswordResetToken == token
+            );
+        }
+
+        public async Task UpdateAsync(UserData user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

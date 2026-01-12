@@ -1,20 +1,64 @@
-﻿@{
+﻿@using MVC_Project.Models.ViewModel
+@model UserLoginViewModel
+
+@{
     ViewData["Title"] = "Login";
 }
 
 <h2 class="mb-4">Login</h2>
 
 <form asp-action="Login" method="post" class="p-4 border rounded shadow-sm bg-light">
-    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+    <div asp-validation-summary="All"
+         class="alert alert-danger validation-summary mb-4">
 
-    <div class="form-group mb-3">
-        <label>Email</label>
-        <input name="email" class="form-control" type="email" placeholder="Enter your email" />
+        <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-exclamation-octagon-fill fs-5 mt-1"></i>
+
+            <div>
+                <div class="fw-semibold mb-1">
+                    There was a problem
+                </div>
+
+                <ul class="validation-list mb-0">
+                    @* MVC renders errors here *@
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <div class="form-group mb-4">
-        <label>Password</label>
-        <input name="password" class="form-control" type="password" placeholder="Enter your password" />
+
+
+    <div class="form-group mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email"
+               class="form-control"
+               placeholder="Enter your email" />
+    </div>
+
+    <div class="form-group mb-2">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password"
+               class="form-control"
+               placeholder="Enter your password" />
+    </div>
+
+
+    <!-- ✅ Forgot Password -->
+    <div class="d-flex justify-content-center gap-3 mb-4 small">
+        <a href="#"
+           class="text-decoration-none"
+           data-bs-toggle="modal"
+           data-bs-target="#forgotPasswordModal">
+            Forgot Password?
+        </a>
+        <span class="text-muted">|</span>
+        <!-- ✅ Forgot Email -->
+        <a href="#" class="text-decoration-none"
+           data-bs-toggle="modal"
+           data-bs-target="#forgotEmailModal">
+            Forgot Email?
+        </a>
+
     </div>
 
     <div class="d-grid mb-3">
@@ -30,3 +74,5 @@
         </a>
     </div>
 </form>
+@await Html.PartialAsync("/Views/PartialModels/_ForgotEmailAddressModel.cshtml")
+@await Html.PartialAsync("/Views/PartialModels/_ForgotPasswordModel.cshtml")
