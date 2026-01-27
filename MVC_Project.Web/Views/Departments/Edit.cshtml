@@ -1,0 +1,84 @@
+﻿@model MVC_Project.Models.Models.Department
+
+@{
+    ViewData["Title"] = "Edit Department";
+}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Edit Department</h2>
+            <p class="text-muted mb-0" id="deptText">Update department information</p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-light">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+
+    <!-- Card -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Validation -->
+                <div asp-validation-summary="All"
+                     class="alert alert-danger rounded-3 mb-4"></div>
+
+                <!-- Name -->
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-medium"></label>
+                    <input asp-for="Name"
+                           class="form-control form-control-lg" />
+                    <span asp-validation-for="Name"
+                          class="text-danger small"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label asp-for="Description"
+                           class="form-label fw-medium"></label>
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="3"></textarea>
+                </div>
+
+                <!-- Status -->
+                <div class="form-check form-switch mb-4">
+                    <input asp-for="IsActive"
+                           class="form-check-input" />
+                    <label asp-for="IsActive"
+                           class="form-check-label fw-medium">
+                        Active Department
+                    </label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index"
+                       class="btn btn-light px-4">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="btn btn-success px-4">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Update
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

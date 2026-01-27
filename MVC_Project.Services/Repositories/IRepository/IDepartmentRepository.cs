@@ -9,10 +9,14 @@ namespace MVC_Project.Services.Repositories.IRepository
 {
      public interface IDepartmentRepository
     {
-        Task<IEnumerable<Department>> GetAllDepartment();
+        Task<IQueryable<Department>> GetAllDepartment();
         Task<Department?> GetDepartmentById(int? id);
         Task<Department> AddDepartment(Department department);
-        Task<Department> EditDepartment(int? id, Department department);
+        Task<Department> EditDepartment(int? id, Department updatedDepartment);
         Task<Department> DeleteDepartment(int? id);
+
+        Task<Department> GetBenchDepartmentAsync();
+
+        Task ReassignEmployeesToBenchAsync(int? departmentId);
     }
 }

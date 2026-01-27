@@ -16,22 +16,73 @@
         <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
             <!-- Center: Links -->
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3 gap-2">
+
+                <!-- Home -->
                 <li class="nav-item">
-                    <a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Homepage"><i class="bi bi-house"></i> Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Employees" asp-action="Index"><i class="bi bi-people"></i> Employees</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-gear"></i> Services
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                       asp-controller="Home" asp-action="Homepage">
+                        <i class="bi bi-house"></i> Home
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
-                        <li><a class="dropdown-item" href="/Service1">Service 1</a></li>
-                        <li><a class="dropdown-item" href="/Service2">Service 2</a></li>
+                </li>
+
+                <!-- People -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle
+                                    @(new[] { "Employees", "Bench" }
+                                    .Contains(ViewContext.RouteData.Values["controller"]?.ToString())
+                                    ? "active" : "")"
+                       href="#" id="peopleDropdown"
+                       role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-people"></i> People
+                    </a>
+
+                    <ul class="dropdown-menu shadow-sm rounded-3 border-0"
+                        aria-labelledby="peopleDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Employees" asp-action="Index">
+                                <i class="bi bi-person-badge me-2"></i> Employees
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Bench" asp-action="Index">
+                                <i class="bi bi-person-dash me-2"></i> Bench
+                            </a>
+                        </li>
                     </ul>
                 </li>
+
+                <!-- Structure -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle
+                                     @(new[] { "Departments", "Projects" }
+                                    .Contains(ViewContext.RouteData.Values["controller"]?.ToString())
+                                    ? "active" : "")"
+                       href="#" id="structureDropdown"
+                       role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-diagram-2"></i> Structure
+                    </a>
+
+                    <ul class="dropdown-menu shadow-sm rounded-3 border-0"
+                        aria-labelledby="structureDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Departments" asp-action="Index">
+                                <i class="bi bi-building me-2"></i> Departments
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Projects" asp-action="Index">
+                                <i class="bi bi-kanban me-2"></i> Projects
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
+
 
             <!-- Right: Theme Toggle + User Menu -->
             <div class="d-flex align-items-center gap-3">

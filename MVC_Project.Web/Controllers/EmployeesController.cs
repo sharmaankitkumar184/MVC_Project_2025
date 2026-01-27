@@ -9,6 +9,7 @@ using X.PagedList.Extensions;
 
 namespace MVC_Project.Web.Controllers
 {
+    [Authorize]
     public class EmployeesController : Controller
     {
         private readonly ILogger<EmployeesController> _logger;
@@ -22,7 +23,7 @@ namespace MVC_Project.Web.Controllers
             _deptrepo = deptrepo;
             _addrepo = addrepo;
         }
-        [Authorize]
+        
         // GET: Employees
         public async Task<IActionResult> Index(int? page, int pageSize = 9)
         {
