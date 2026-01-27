@@ -2,8 +2,11 @@ namespace MVC_Project.Web.Models
 {
     public class ErrorViewModel
     {
-        public string? RequestId { get; set; }
+        public string Title { get; set; } = "Unexpected Error";
+        public string Message { get; set; }
+            = "Something went wrong. Please try again later.";
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        public string? RequestId { get; set; }
     }
+
 }

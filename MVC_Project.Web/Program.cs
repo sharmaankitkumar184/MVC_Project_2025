@@ -39,9 +39,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Build and middleware
 var app = builder.Build();
 
+app.UseExceptionHandler("/Error");
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+   
     app.UseHsts();
 }
 

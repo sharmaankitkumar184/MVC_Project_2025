@@ -57,7 +57,7 @@
         const footerSocialLinks = document.getElementsByClassName("footer-Social-Links");
         const quickfooterlinks = document.getElementsByClassName("quick-Links-Footer");
         const pagetextstyle = document.getElementById("page-text-style");
-
+        const themeSwitchDeptText = document.getElementById("deptText");
 
         function setTheme(isDark) {
             document.body.classList.toggle("custom-dark-body-style", isDark);
@@ -87,7 +87,11 @@
                 pagetextstyle.classList.toggle("custom-page-text-style-dark", isDark);
                 pagetextstyle.classList.toggle("custom-page-text-style-light", !isDark);
             }
-
+             if (themeSwitchDeptText) {
+                themeSwitchDeptText.classList.toggle("custom-department-body-dark", isDark);
+                themeSwitchDeptText.classList.toggle("custom-department-body-light", !isDark);
+            }
+             
             if (themeLabel) {
                 themeLabel.textContent = isDark ? "Dark Mode" : "Light Mode";
             }

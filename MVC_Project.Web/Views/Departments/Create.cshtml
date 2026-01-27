@@ -1,0 +1,81 @@
+﻿@model MVC_Project.Models.Models.Department
+
+@{
+    ViewData["Title"] = "Create Department";
+}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Create Department</h2>
+            <p class="text-muted mb-0" id="deptText">Add a new department to the organization</p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-light">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+
+            @using (Html.BeginForm("Create", "Departments", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <!-- Validation Summary -->
+                <div asp-validation-summary="All"
+                     class="alert alert-danger rounded-3 mb-4"></div>
+
+                <!-- Department Name -->
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Name, new { @class = "form-label fw-medium" })
+                    @Html.TextBoxFor(m => m.Name, new
+                    {
+                        @class = "form-control form-control-lg",
+                                placeholder = "Enter department name"
+                                })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger small" })
+                </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Description, new { @class = "form-label fw-medium" })
+                @Html.TextAreaFor(m => m.Description, new
+                                {
+                        @class = "form-control",
+                                rows = 3,
+                                placeholder = "Enter department description (optional)"
+                                })
+            </div>
+
+            <!-- Is Active -->
+            <div class="form-check form-switch mb-4">
+                @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input" })
+                @Html.LabelFor(m => m.IsActive, new { @class = "form-check-label fw-medium" })
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-action="Index" class="btn btn-light px-4">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Save Department
+                </button>
+            </div>
+                        }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

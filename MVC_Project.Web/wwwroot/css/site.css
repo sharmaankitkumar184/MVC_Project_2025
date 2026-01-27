@@ -1,36 +1,41 @@
+
+/*------------------------xxxxxxxxxxxxxxxx-----------------Start Master Layout Styling----------------------xxxxxxxxxxx----------------------------*/
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-        margin: 0;
+    margin: 0;
     padding: 0;
 }
 
 .card-body {
-    background-color: #e6f4ea!important;
+    background-color: #e6f4ea !important;
 }
+/*----------------------xxxxxxxxxxxxxxxx-----------------End Master Layout Styling----------------------xxxxxxxxxxx----------------------------*/
 
-/*dark mode command light mode style form navigation*/
+/*----------------------xxxxxxxxxxxxxxxx-----------Start Dark Mode Command light mode style Navigation----------------xxxxxxxxxxx---------------*/
+
 
 .custom-dark-body-style {
     background-color: #242726 !important;
 }
+
 /* Dark mode styles Navigation*/
 .logo-svg {
     height: 45px;
@@ -38,8 +43,6 @@ body {
     color: #1e90ff; /* Dodger Blue */
     transition: color 0.3s ease-in-out;
 }
-
-
 
 .custom-navbar-dark {
     background-color: #445c50 !important; /* dark gray (darker than body) */
@@ -64,12 +67,43 @@ body {
 .custom-navbar-brand-dark {
     color: #eaeaea !important;
 }
+
 .custom-navbar-brand-light {
     color: #2c3b51 !important;
 }
-/*END Dark mode styles Navigation*/
 
-/*Footer Dark mode styles */
+/* Department Dark light Mode*/
+
+.custom-department-body-dark {
+    color: #eaeaea !important;
+}
+
+.custom-department-body-light {
+    color: #2c3b51 !important;
+}
+
+.nav-link.active {
+    background: rgba(34, 197, 94, 0.2); /* green */
+    color: #ffffff !important;
+    border-radius: 0.6rem;
+    font-weight: 600;
+}
+
+.dropdown-item.active {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #166534 !important;
+    font-weight: 600;
+}
+.dropdown-item.active {
+    border-left: 3px solid #1d4ed8;
+    padding-left: 13px;
+}
+
+
+/*-------------------xxxxxxxxxxxxxxxx------------------END Dark Mode Command light Mode style Navigation---------------------xxxxxxxxxxx----------------------*/
+
+/*-------------------xxxxxxxxxxxxxxxx------------------Start Footer Dark Mode Light Mode styles---------------------xxxxxxxxxxx----------------------*/
+
 .custom-mainfooter-dark {
     background-color: #5c985f !important; /* dark gray (darker than body) */
     color: #eaeaea;
@@ -86,9 +120,8 @@ body {
     color: #2c3b51 !important;
 }
 
-.custom-footer-link-dark
- {
-   color: #f8f9fa !important;
+.custom-footer-link-dark {
+    color: #f8f9fa !important;
 }
 
 
@@ -100,8 +133,11 @@ body {
     color: #f8f9fa !important;
 }
 
-/*End footer styling*/
-/*Page button styling*/
+/*-------------------xxxxxxxxxxxxxxxx------------------End Footer Dark Mode Light Mode styles---------------------xxxxxxxxxxx----------------------*/
+
+
+/*---------------------xxxxxxxxxxxxxxxx--------------------Start Page Button Styling-----------------------xxxxxxxxxxx--------------------------*/
+
 .custom-page-light {
     background-color: white;
     color: #0d6efd;
@@ -119,15 +155,18 @@ body {
     color: floralwhite !important;
     border-color: white !important;
 }
-.custom-page-text-style-dark
-{
-    color:aliceblue!important;
+
+.custom-page-text-style-dark {
+    color: aliceblue !important;
 }
+
 .custom-page-text-style-light {
     color: #2c3b51 !important;
 }
 
-/*End Page button styling*/
+/*---------------------xxxxxxxxxxxxxxxx--------------------End Page Button Styling-----------------------xxxxxxxxxxx--------------------------*/
+
+
 #themeLabel, #themeSwitch {
     cursor: pointer;
 }
@@ -170,10 +209,73 @@ body {
 .validation-summary-valid {
     display: none;
 }
+
 .fade-out {
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
 
 
+/* ----------------------xxxxxxxxxxx------------------Start Department Page Styling-----------------xxxxxxxxxxxxxx-------------------------*/
 
+.department-table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.department-table td {
+    padding: 1rem;
+}
+
+.department-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Truncate long descriptions */
+.description-cell {
+    max-width: 420px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Softer buttons */
+.btn-group .btn {
+    border-radius: 0.5rem;
+}
+
+.detail-box {
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+    .detail-box .label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-box .value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #111827;
+    }
+
+.dept-error-strip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(220, 53, 69, 0.08);
+    color: #dc3545;
+    padding: 0.5rem 0.75rem;
+    border-left: 4px solid #dc3545;
+    border-radius: 0.375rem;
+    font-size: 0.85rem;
+}
+
+/* ----------------------xxxxxxxxxxx------------------End Department Page Styling-----------------xxxxxxxxxxxxxx-------------------------*/

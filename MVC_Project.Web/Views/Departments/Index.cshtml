@@ -1,0 +1,97 @@
+﻿@model IQueryable<MVC_Project.Models.Models.Department>
+
+@{
+    ViewData["Title"] = "Department List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-sm-1 mt-4">Departments</h2>
+        <p class="text-muted mb-0" id="deptText">Manage organization departments</p>
+    </div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success mt-2 rounded-3">
+            <i class="bi bi-check-circle-fill me-1"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    <a asp-action="Create" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle me-2"></i>
+        Add Department
+    </a>
+
+</div>
+<div class="card border-2 shadow-sm rounded-2">
+    <div class="card-body p-0">
+        <table class="table align-middle mb-0 department-table">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var dept in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">@dept.Name</div>
+                        </td>
+
+                        <td class="text-muted small description-cell"
+                            title="@dept.Description">
+                            @dept.Description
+                        </td>
+
+                        <td>
+                            @if (dept.IsActive)
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">
+                                    <i class="bi bi-check-circle me-1"></i> Active
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2">
+                                    <i class="bi bi-x-circle me-1"></i> Inactive
+                                </span>
+                            }
+                        </td>
+
+                        <td class="text-muted small">
+                            @dept.CreatedAt.ToString("dd MMM yyyy")
+                        </td>
+
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <a asp-action="Edit" asp-route-id="@dept.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@dept.Id"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.classList.add('fade');
+            setTimeout(() => alert.remove(), 500);
+        }
+    }, 3000);
+</script>
