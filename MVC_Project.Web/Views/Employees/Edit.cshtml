@@ -1,5 +1,6 @@
-﻿@using MVC_Project.Models.Models
-@model MVC_Project.Models.Models.Employee
+﻿@using MVC_Project.Models.Enums
+@using MVC_Project.Models.Models
+@model MVC_Project.Models.ViewModel.EmployeeUserVm
 
 @{
     ViewData["Title"] = "Edit Employee";
@@ -64,6 +65,15 @@
                             </select>
                             <span asp-validation-for="Gender" class="text-danger"></span>
                         </div>
+                        <!-- Designation -->
+                        <div class="form-group mb-4">
+                            <label asp-for="Designation" class="form-label">Designation</label>
+                            <select asp-for="Designation" asp-items="Html.GetEnumSelectList<Designation>()" class="form-select shadow-sm">
+                                <option value="">Select Designation</option>
+                            </select>
+                            <span asp-validation-for="Designation" class="text-danger"></span>
+                        </div>
+                        
 
                         <!-- Department -->
                         <div class="form-group mb-4">
@@ -81,6 +91,15 @@
                                 <option value="">Select Address</option>
                             </select>
                             <span asp-validation-for="AddressId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Role" class="form-label">Role</label>
+                            <select asp-for="Role"
+                                    asp-items="Html.GetEnumSelectList<UserRole>()"
+                                    class="form-select shadow-sm">
+                                <option value="">Select Role</option>
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
                         </div>
 
                         <div class="form-group mb-4">

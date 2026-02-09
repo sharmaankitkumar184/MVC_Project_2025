@@ -25,9 +25,9 @@ namespace MVC_Project.Services.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Define Composite Key: EmployeeCode and Id
-            modelBuilder.Entity<Employee>()
-                .HasKey(e => new { e.Id, e.EmployeeCode });
+            //// Define Composite Key: EmployeeCode and Id
+            //modelBuilder.Entity<Employee>()
+            //    .HasKey(e => new { e.Id, e.EmployeeCode });
 
             // Ensure EmployeeCode is unique using HasIndex() method
             modelBuilder.Entity<Employee>()
@@ -37,6 +37,44 @@ namespace MVC_Project.Services.Data
             modelBuilder.Entity<Employee>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();  // This ensures that Id is auto-incremented
+            modelBuilder.Entity<Employee>(entity =>
+            {
+
+                entity.HasOne(e => e.Manager)
+                      .WithMany(e => e.TeamMembers)
+                      .HasForeignKey(e => e.ManagerId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+            //// User → Employee mapping using EmployeeCode
+            //modelBuilder.Entity<UserData>()
+            //    .HasOne(u => u.Employee)
+            //    .WithOne(e => e.User)
+            //    .HasForeignKey<UserData>(u => u.Id)
+            //    .HasPrincipalKey<Employee>(e => e.UserId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserData>().HasData(new UserData
+            {
+                Id = 555,
+                FullName ="OrgMaster",
+                Email = "admin@orgmaster.com",
+                Username ="OM3355",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Godisgreat@184"),
+                PhoneNumber="9097920260",
+                AddressId = 1,
+                DateOfRegister=DateTime.Now,
+                PasswordResetToken="",
+                PasswordResetTokenExpiry=null,
+                Role = UserRole.Admin
+            });
+ 
+            // Address-User Relationship (One-to-Many)
+            modelBuilder.Entity<Address>()
+                .HasMany(a => a.Users)
+                .WithOne(e => e.Address)
+                .HasForeignKey(e => e.AddressId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
 
             // Department-Employee Relationship (One-to-Many)
@@ -60,6 +98,16 @@ namespace MVC_Project.Services.Data
                  .HasForeignKey<Salaries>(s => s.EmployeeCode)  // Using EmployeeCode as FK
                  .HasPrincipalKey<Employee>(e => e.EmployeeCode) // Ensure EmployeeCode is used as principal key
                  .OnDelete(DeleteBehavior.Cascade); // Specify delete behavior (optional)
+
+            modelBuilder.Entity<Project>(entity =>
+            {
+                entity.Property(p => p.Budget)
+                      .HasPrecision(18, 2);
+
+                entity.Property(p => p.CostIncurred)
+                      .HasPrecision(18, 2);
+            });
+
 
         }
     }

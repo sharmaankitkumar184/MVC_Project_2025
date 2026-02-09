@@ -24,14 +24,19 @@ namespace MVC_Project.Models.Models
         [Phone]
         public string PhoneNumber { get; set; }
 
-        [StringLength(200)]
-        public string Address { get; set; }
+        public int? AddressId { get; set; }  // Nullable
+        public Address? Address { get; set; } // Navigation Property
 
         [DataType(DataType.DateTime)]
         public DateTime DateOfRegister { get; set; } = DateTime.Now;
 
         public string? PasswordResetToken { get; set; }
         public DateTime? PasswordResetTokenExpiry { get; set; }
+
+        public UserRole Role { get; set; }
+
+        // navigation
+        public Employee Employee { get; set; } = null!;
 
     }
     public enum LoginResult
@@ -40,4 +45,11 @@ namespace MVC_Project.Models.Models
         EmailNotFound,
         InvalidPassword
     }
+    public enum UserRole
+    {
+        Admin = 1,
+        Manager = 2,
+        Employee = 3
+    }
+
 }

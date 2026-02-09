@@ -48,6 +48,12 @@
             {
                 <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div class="card shadow-sm">
+                        <!-- 🔥 Designation Badge -->
+                        <span class="designation-badge">
+                            <i class="fas fa-briefcase me-1"></i>
+                            @item.Designation
+                        </span>
+
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
                             <h6 class="card-subtitle mb-2 text-muted">ID: @Html.DisplayFor(modelItem => item.EmployeeCode)</h6>
@@ -63,7 +69,7 @@
                             <p class="card-text">
                                 <strong>Phone:</strong> @(string.IsNullOrEmpty(item.Phone) ? "N/A" : item.Phone)
                             </p>
-
+                            
                             <p class="card-text">
                                 <strong>Department:</strong> @(item.Department != null ? item.Department.Name : "N/A")
                             </p>

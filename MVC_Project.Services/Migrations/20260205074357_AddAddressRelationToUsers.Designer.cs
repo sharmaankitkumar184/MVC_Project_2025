@@ -4,6 +4,7 @@ using MVC_Project.Services.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_Project.Services.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260205074357_AddAddressRelationToUsers")]
+    partial class AddAddressRelationToUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,9 +104,6 @@ namespace MVC_Project.Services.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Designation")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -298,12 +298,12 @@ namespace MVC_Project.Services.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 555,
+                            Id = 1,
                             AddressId = 1,
-                            DateOfRegister = new DateTime(2026, 2, 6, 13, 38, 13, 954, DateTimeKind.Local).AddTicks(8285),
+                            DateOfRegister = new DateTime(2026, 2, 5, 13, 13, 56, 879, DateTimeKind.Local).AddTicks(2205),
                             Email = "admin@orgmaster.com",
                             FullName = "OrgMaster",
-                            PasswordHash = "$2a$11$J58OBSgtIM2Xds6KKiXm/.yIeBeKxfbBVpXIl0D5TM/bPqn34EoRW",
+                            PasswordHash = "$2a$11$TpHQqJRiX3bqAzSbggM.nOYxen2bvx5nZeuevSNscLJcf7kHbNi/u",
                             PasswordResetToken = "",
                             PhoneNumber = "9097920260",
                             Role = 1,

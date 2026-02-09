@@ -1,4 +1,12 @@
-﻿<header>
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    bool isManager = User.IsInRole("Manager");
+    bool isAdmin = User.IsInRole("Admin");
+    bool isEmployee = User.IsInRole("Employee");
+}
+
+
+<header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow-sm" id="mainNavbar">
         <!-- Left: Brand -->
         <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Homepage" id="navbar-brand">
@@ -13,76 +21,188 @@
         </button>
 
         <!-- Navbar Links + User Section -->
+
         <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <!-- Center: Links -->
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3 gap-2">
+
+            <!-- CENTER MENU -->
+            <ul class="navbar-nav mx-auto gap-lg-3 gap-2">
 
                 <!-- Home -->
                 <li class="nav-item">
-                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                    <a class="nav-link @(currentController == "Home" ? "active" : "")"
                        asp-controller="Home" asp-action="Homepage">
                         <i class="bi bi-house"></i> Home
                     </a>
                 </li>
 
-                <!-- People -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle
-                                    @(new[] { "Employees", "Bench" }
-                                    .Contains(ViewContext.RouteData.Values["controller"]?.ToString())
-                                    ? "active" : "")"
-                       href="#" id="peopleDropdown"
-                       role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-people"></i> People
-                    </a>
+                <!-- PEOPLE -->
+                @if (isAdmin || isManager || isEmployee)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle @(new[] { "Employees", "ManagerDashboard", "Bench" }.Contains(currentController) ? "active" : "")"
+                           href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-people"></i> People
+                        </a>
 
-                    <ul class="dropdown-menu shadow-sm rounded-3 border-0"
-                        aria-labelledby="peopleDropdown">
-                        <li>
-                            <a class="dropdown-item"
-                               asp-controller="Employees" asp-action="Index">
-                                <i class="bi bi-person-badge me-2"></i> Employees
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item"
-                               asp-controller="Bench" asp-action="Index">
-                                <i class="bi bi-person-dash me-2"></i> Bench
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                        <ul class="dropdown-menu shadow-sm border-0">
 
-                <!-- Structure -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle
-                                     @(new[] { "Departments", "Projects" }
-                                    .Contains(ViewContext.RouteData.Values["controller"]?.ToString())
-                                    ? "active" : "")"
-                       href="#" id="structureDropdown"
-                       role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-diagram-2"></i> Structure
-                    </a>
+                            <!-- Admin + Manager -->
+                            @if (isAdmin || isManager)
+                            {
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Employees" asp-action="Index">
+                                        <i class="bi bi-person-badge me-2"></i> Employees
+                                    </a>
+                                </li>
+                            }
 
-                    <ul class="dropdown-menu shadow-sm rounded-3 border-0"
-                        aria-labelledby="structureDropdown">
-                        <li>
-                            <a class="dropdown-item"
-                               asp-controller="Departments" asp-action="Index">
-                                <i class="bi bi-building me-2"></i> Departments
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item"
-                               asp-controller="Projects" asp-action="Index">
-                                <i class="bi bi-kanban me-2"></i> Projects
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                            <!-- Manager -->
+                            @if (isManager)
+                            {
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="ManagerDashboard" asp-action="MyTeam">
+                                        <i class="bi bi-diagram-3 me-2"></i> My Team
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="TeamAttendance" asp-action="Index">
+                                        <i class="bi bi-calendar-check me-2"></i> Team Attendance
+                                    </a>
+                                </li>
+                            }
+
+                            <!-- Admin -->
+                            @if (isAdmin)
+                            {
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Bench" asp-action="Index">
+                                        <i class="bi bi-person-dash me-2"></i> Bench
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Users" asp-action="Index">
+                                        <i class="bi bi-shield-lock me-2"></i> User Management
+                                    </a>
+                                </li>
+                            }
+
+                            <!-- Employee -->
+                            @if (isEmployee)
+                            {
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="EmployeeDashboard" asp-action="Index">
+                                        <i class="bi bi-person-circle me-2"></i> My Profile
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+
+                <!-- STRUCTURE (Admin + Manager) -->
+                @if (isAdmin || isManager)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle @(new[] { "Departments", "Projects" }.Contains(currentController) ? "active" : "")"
+                           href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-diagram-2"></i> Structure
+                        </a>
+
+                        <ul class="dropdown-menu shadow-sm border-0">
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="Departments" asp-action="Index">
+                                    <i class="bi bi-building me-2"></i> Departments
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="Projects" asp-action="Index">
+                                    <i class="bi bi-kanban me-2"></i> Projects
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+
+                <!-- MY SPACE (Employee only) -->
+                @if (isEmployee)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person"></i> My Space
+                        </a>
+
+                        <ul class="dropdown-menu shadow-sm border-0">
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="MyTasks" asp-action="Index">
+                                    <i class="bi bi-list-check me-2"></i> My Tasks
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="Attendance" asp-action="Index">
+                                    <i class="bi bi-calendar me-2"></i> My Attendance
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="Payslip" asp-action="Index">
+                                    <i class="bi bi-receipt me-2"></i> Payslips
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+
+                <!-- ADMIN -->
+                @if (isAdmin)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i> Admin
+                        </a>
+
+                        <ul class="dropdown-menu shadow-sm border-0">
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="Roles" asp-action="Index">
+                                    <i class="bi bi-person-lock me-2"></i> Roles & Permissions
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="AuditLogs" asp-action="Index">
+                                    <i class="bi bi-journal-text me-2"></i> Audit Logs
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-controller="Settings" asp-action="Index">
+                                    <i class="bi bi-sliders me-2"></i> System Settings
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
 
             </ul>
-
 
             <!-- Right: Theme Toggle + User Menu -->
             <div class="d-flex align-items-center gap-3">

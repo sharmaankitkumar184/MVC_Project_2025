@@ -4,6 +4,7 @@ using MVC_Project.Services.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_Project.Services.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260203133305_LinkUserEmployeeCode")]
+    partial class LinkUserEmployeeCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,9 +106,6 @@ namespace MVC_Project.Services.Migrations
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Designation")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -150,9 +150,7 @@ namespace MVC_Project.Services.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Employees");
                 });
@@ -252,8 +250,10 @@ namespace MVC_Project.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AddressId")
-                        .HasColumnType("int");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("DateOfRegister")
                         .HasColumnType("datetime2");
@@ -291,24 +291,7 @@ namespace MVC_Project.Services.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
-
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 555,
-                            AddressId = 1,
-                            DateOfRegister = new DateTime(2026, 2, 6, 13, 38, 13, 954, DateTimeKind.Local).AddTicks(8285),
-                            Email = "admin@orgmaster.com",
-                            FullName = "OrgMaster",
-                            PasswordHash = "$2a$11$J58OBSgtIM2Xds6KKiXm/.yIeBeKxfbBVpXIl0D5TM/bPqn34EoRW",
-                            PasswordResetToken = "",
-                            PhoneNumber = "9097920260",
-                            Role = 1,
-                            Username = "OM3355"
-                        });
                 });
 
             modelBuilder.Entity("MVC_Project.Models.Models.Employee", b =>
@@ -334,8 +317,8 @@ namespace MVC_Project.Services.Migrations
                         .HasForeignKey("ProjectId");
 
                     b.HasOne("MVC_Project.Models.Models.UserData", "User")
-                        .WithOne("Employee")
-                        .HasForeignKey("MVC_Project.Models.Models.Employee", "UserId");
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Address");
 
@@ -369,21 +352,9 @@ namespace MVC_Project.Services.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("MVC_Project.Models.Models.UserData", b =>
-                {
-                    b.HasOne("MVC_Project.Models.Models.Address", "Address")
-                        .WithMany("Users")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Address");
-                });
-
             modelBuilder.Entity("MVC_Project.Models.Models.Address", b =>
                 {
                     b.Navigation("Employees");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("MVC_Project.Models.Models.Department", b =>
@@ -404,12 +375,6 @@ namespace MVC_Project.Services.Migrations
             modelBuilder.Entity("MVC_Project.Models.Models.Project", b =>
                 {
                     b.Navigation("AssignedEmployees");
-                });
-
-            modelBuilder.Entity("MVC_Project.Models.Models.UserData", b =>
-                {
-                    b.Navigation("Employee")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -279,3 +279,21 @@ body {
 }
 
 /* ----------------------xxxxxxxxxxx------------------End Department Page Styling-----------------xxxxxxxxxxxxxx-------------------------*/
+
+.designation-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    justify-content: center;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+    letter-spacing: 0.3px;
+}
+    .designation-badge:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
+    }

@@ -31,53 +31,6 @@ namespace MVC_Project.Web.Controllers
             _config = config;
             _emailService = emailservice;
         }
-        // GET: Account/Register
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        // POST: Account/Register
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(UserRegisterViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var userexist = _userRepo.GetUserDetailsByEmailAsync(model.Email).Result;
-
-            if (userexist!=null)
-            {
-                ModelState.AddModelError("Email", "This email is already registered.");
-                return View(model);
-            }
-            //if (model.Password != model.ConfirmPassword)
-            //{
-            //    ModelState.AddModelError("", "Passwords do not match.");
-            //    return View();
-            //}
-
-            var newUser = new UserData
-            {
-                FullName = model.FullName,
-                Email = model.Email,
-                Username = model.Username, // or model.Email.Split('@')[0] if you're not using input
-                PhoneNumber = model.PhoneNumber,
-                Address = model.Address,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, workFactor: 12),
-                DateOfRegister = DateTime.Now
-            };
-
-
-            bool result = await _userRepo.RegisterUserAsync(newUser);
-            if (result)
-                return RedirectToAction("Login");
-
-            ModelState.AddModelError("", "Registration failed. Try again.");
-            return View(model);
-        }
-
         // GET: Account/Login
         public IActionResult Login()
         {
@@ -111,6 +64,7 @@ namespace MVC_Project.Web.Controllers
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
@@ -123,7 +77,20 @@ namespace MVC_Project.Web.Controllers
                 ExpiresUtc = DateTime.UtcNow.AddHours(2)
             });
 
-            return RedirectToAction("Index", "Employees");
+            // After successful login
+            if (user.Role == UserRole.Admin)
+            {
+                return RedirectToAction("Index", "Employees");
+            }
+            else if (user.Role == UserRole.Manager)
+            {
+                return RedirectToAction("MyTeam", "ManagerDashboard");
+            }
+            else
+            {
+                return RedirectToAction("Index", "EmployeeDashboard");
+            }
+
         }
 
         [Authorize]
@@ -132,7 +99,6 @@ namespace MVC_Project.Web.Controllers
             HttpContext.SignOutAsync("MyCookieAuth");
             return RedirectToAction("Login");
         }
-        
 
     [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)

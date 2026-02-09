@@ -3,25 +3,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.Models.Models;
+using MVC_Project.Models.ViewModel;
 using MVC_Project.Services.Repositories.IRepository;
+using System.Data;
 using System.Drawing.Printing;
 using X.PagedList.Extensions;
 
 namespace MVC_Project.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles= "Admin ,Manager")]
     public class EmployeesController : Controller
     {
         private readonly ILogger<EmployeesController> _logger;
         private readonly IEmployeeRepository _emprepo;
         private readonly IDepartmentRepository _deptrepo;
         private readonly IAddressRepository _addrepo;
-        public EmployeesController(ILogger<EmployeesController> logger,IEmployeeRepository emprepo, IDepartmentRepository deptrepo, IAddressRepository addrepo)
+        private readonly IUserRepository _userrepo;
+        public EmployeesController(ILogger<EmployeesController> logger,IEmployeeRepository emprepo, IDepartmentRepository deptrepo, IAddressRepository addrepo, IUserRepository userrepo)
         {
             _logger = logger;
             _emprepo = emprepo;
             _deptrepo = deptrepo;
             _addrepo = addrepo;
+            _userrepo = userrepo;
         }
         
         // GET: Employees
@@ -57,7 +61,7 @@ namespace MVC_Project.Web.Controllers
         }
 
         // GET: Employees/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             ViewBag.Departments = new SelectList(_deptrepo.GetAllDepartment().Result, "Id", "Name");
             ViewBag.Addresses = new SelectList(_addrepo.GetAllAddress().Result, "Id", "Street");
@@ -67,18 +71,29 @@ namespace MVC_Project.Web.Controllers
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,EmployeeCode,Email,Phone,DateOfBirth,Gender,DepartmentId,AddressId")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Id,Name,EmployeeCode,Email,Phone,DateOfBirth,Gender,Designation,DepartmentId,AddressId")] Employee employee)
         {
-            // Remove Salary from the model state validation if needed
+            // ✅ Remove nested validation properly
             ModelState.Remove("Salary");
-            if (ModelState.IsValid)
-            {
 
-                await _emprepo.AddEmployee(employee);
-                return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid)
+            {
+                // 🔥 MUST re-populate dropdowns
+                ViewBag.Departments = new SelectList(
+                    await _deptrepo.GetAllDepartment(), "Id", "Name");
+
+                ViewBag.Addresses = new SelectList(
+                    await _addrepo.GetAllAddress(), "Id", "Street");
+
+                return View(employee);
             }
-            return View(employee);
+
+            // ✅ Save logic
+            await _emprepo.AddEmployee(employee);
+
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -94,13 +109,30 @@ namespace MVC_Project.Web.Controllers
             {
                 return NotFound();
             }
-            return View(employee);
+            // 🔥 MAP ENTITY → VIEWMODEL
+            var EmployeeVmmodel = new EmployeeUserVm
+            {
+                Id = employee.Id,
+                Name = employee.Name,
+                EmployeeCode = employee.EmployeeCode,
+                Email = employee.Email,
+                Phone = employee.Phone,
+                DateOfBirth = employee.DateOfBirth,
+                Gender = employee.Gender,
+                Designation=employee.Designation,
+                DepartmentId = employee.DepartmentId,
+                AddressId = employee.AddressId,
+
+                // User field
+                Role = employee.User.Role
+            };
+            return View(EmployeeVmmodel);
         }
 
         // POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,EmployeeCode,Email,Phone,DateOfBirth,Gender,DepartmentId,AddressId")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,EmployeeCode,Email,Phone,DateOfBirth,Gender,Designation,DepartmentId,AddressId,Role")] EmployeeUserVm employee)
         {
 
             if (id != employee.Id)
