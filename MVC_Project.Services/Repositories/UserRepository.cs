@@ -15,10 +15,9 @@ namespace MVC_Project.Services.Repositories
             _context = context;
         }
 
-        public async Task<bool> RegisterUserAsync(UserData user)
+        public async Task<IQueryable<UserData>> GetAllUserAsync()
         {
-            _context.Users.Add(user);
-            return await _context.SaveChangesAsync() > 0;
+            return _context.Users.Include(e => e.Address);
         }
 
         public async Task<(LoginResult Result, UserData User)> AuthenticateUserAsync(string email, string password)

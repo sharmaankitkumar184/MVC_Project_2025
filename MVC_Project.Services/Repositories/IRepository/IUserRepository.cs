@@ -11,7 +11,7 @@ namespace MVC_Project.Services.Repositories.IRepository
 {
     public interface IUserRepository
     {
-        Task<bool> RegisterUserAsync(UserData user);
+        Task<IQueryable<UserData>> GetAllUserAsync();
         Task<(LoginResult Result, UserData User)> AuthenticateUserAsync(string email, string password);
         Task<UserData> GetUserDetailsByEmailAsync(string email);
 

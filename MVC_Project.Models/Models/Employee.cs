@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MVC_Project.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,6 +7,9 @@ namespace MVC_Project.Models.Models
 {
     public class Employee
     {
+        // ========================
+        // BASIC EMPLOYEE INFO
+        // ========================
         [Key]
         public int Id { get; set; }
 
@@ -22,10 +26,19 @@ namespace MVC_Project.Models.Models
         public string? Phone { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
         public Gender Gender { get; set; }
+
+        // 🔥 NEW FIELD
+        [Required]
+        public Designation Designation { get; set; }
+
+        // ========================
+        // ORGANIZATION STRUCTURE
+        // ========================
 
         [Required]
         public int DepartmentId { get; set; }
@@ -40,12 +53,17 @@ namespace MVC_Project.Models.Models
         [NotMapped]
         public virtual Salaries Salary { get; set; }
 
-    }
+        // ✅ SELF-REFERENCING MANAGER RELATION
+        public int? ManagerId { get; set; }
+        public Employee? Manager { get; set; }
 
-    public enum Gender
-    {
-        Male=1,
-        Female=2,
-        Other=3
+        public ICollection<Employee> TeamMembers { get; set; }
+            = new List<Employee>();
+
+        public int? UserId { get; set; }  // Nullable
+        // navigation
+        public UserData? User { get; set; }
+
     }
+  
 }

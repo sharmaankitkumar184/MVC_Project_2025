@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MVC_Project.Models.Models;
 using MVC_Project.Services.Data;
@@ -7,7 +8,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MVC_Project.Web.Controllers
 {
-    
+    [Authorize(Roles = "Admin ,Manager")]
     public class DepartmentsController : Controller
     {
         private readonly IDepartmentRepository _departmentRepository;

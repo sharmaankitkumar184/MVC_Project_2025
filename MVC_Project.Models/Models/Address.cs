@@ -25,5 +25,6 @@ namespace MVC_Project.Models.Models
         public string? ZipCode { get; set; }
 
         public ICollection<Employee>? Employees { get; set; }
+        public ICollection<UserData>? Users { get; set; }
     }
 }
