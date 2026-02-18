@@ -61,5 +61,13 @@ namespace MVC_Project.Services.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> adminCountAsync()
+        {
+            var adminCount = await _context.Users
+    .CountAsync(u => u.Role == UserRole.Admin);
+            return adminCount;
+        }
+
+
     }
 }

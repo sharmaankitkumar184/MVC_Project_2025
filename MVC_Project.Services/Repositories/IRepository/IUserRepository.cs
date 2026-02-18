@@ -20,5 +20,7 @@ namespace MVC_Project.Services.Repositories.IRepository
         Task<UserData> GetByResetTokenAsync(string token, string email);
 
         Task UpdateAsync(UserData user);
+
+        Task<int> adminCountAsync();
     }
 }

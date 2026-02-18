@@ -20,6 +20,7 @@ namespace MVC_Project.Models.Models
         public string? EmployeeCode { get; set; }
 
         [Required, EmailAddress]
+
         public string? Email { get; set; }
 
         [Required, StringLength(15)]

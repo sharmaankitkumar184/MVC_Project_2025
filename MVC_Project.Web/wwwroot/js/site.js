@@ -3,17 +3,22 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const summary = document.querySelector(".validation-summary-errors");
+    const summaries = document.querySelectorAll(
+        ".validation-summary-errors, .validation-alert"
+    );
 
-    if (summary) {
-        // Show for 2 seconds
-        setTimeout(() => {
-            summary.classList.add("fade-out");
-        }, 2000);
+    summaries.forEach(summary => {
 
-        // Remove completely after fade animation
-        setTimeout(() => {
-            summary.style.display = "none";
-        }, 2500);
-    }
+        if (summary.innerText.trim().length > 0) {
+
+            setTimeout(() => {
+                summary.classList.add("fade-out");
+            }, 2000);
+
+            setTimeout(() => {
+                summary.style.display = "none";
+            }, 2500);
+
+        }
+    });
 });
