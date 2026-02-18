@@ -7,6 +7,7 @@ using MVC_Project.Models.ViewModel;
 using MVC_Project.Services.Repositories.IRepository;
 using System.Data;
 using System.Drawing.Printing;
+using System.Security.Claims;
 using X.PagedList.Extensions;
 
 namespace MVC_Project.Web.Controllers
@@ -27,19 +28,38 @@ namespace MVC_Project.Web.Controllers
             _addrepo = addrepo;
             _userrepo = userrepo;
         }
-        
+
         // GET: Employees
         public async Task<IActionResult> Index(int? page, int pageSize = 9)
         {
 
             int pageNumber = page ?? 1; // Default to first page
 
+            //For role based data
+            var loggedInRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
             var employeesQuery = await _emprepo.GetAllEmployee(); // Await the result
 
+            // 🔥 Filter BEFORE pagination
+            if (loggedInRole == "Manager")
+            {
+                employeesQuery = employeesQuery
+                    .Where(e => e.User.Role == UserRole.Employee);
+            }
+            else if (loggedInRole == "Admin")
+            {
+                employeesQuery = employeesQuery
+                    .Where(e => e.User.Role == UserRole.Employee ||
+                                e.User.Role == UserRole.Manager ||
+                                e.User.Role == UserRole.Admin);
+            }
+            // THEN paginate
             var employees = employeesQuery
                 .OrderBy(e => e.Id)
-                .ToPagedList(pageNumber, pageSize); // Use ToPagedList (not async, since it's already awaited)
+                .ToPagedList(pageNumber, pageSize);
+
             ViewBag.PageSize = pageSize; // Pass page size to the view
+
             return View(employees);
         }
 
@@ -63,18 +83,27 @@ namespace MVC_Project.Web.Controllers
         // GET: Employees/Create
         public async Task<IActionResult> Create()
         {
+
             ViewBag.Departments = new SelectList(_deptrepo.GetAllDepartment().Result, "Id", "Name");
             ViewBag.Addresses = new SelectList(_addrepo.GetAllAddress().Result, "Id", "Street");
-            return View();
+            var model = new EmployeeUserVm
+            {
+                DateOfBirth = DateTime.Today.AddYears(-18),
+                address = new Address()
+            };
+
+            return View(model);
         }
 
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,EmployeeCode,Email,Phone,DateOfBirth,Gender,Designation,DepartmentId,AddressId")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Id,Name,Email,Phone,DateOfBirth,Gender,Designation,DepartmentId,AddressId")] EmployeeUserVm employee)
         {
             // ✅ Remove nested validation properly
             ModelState.Remove("Salary");
+            ModelState.Remove("EmployeeCode");
+            ModelState.Remove("address");
 
             if (!ModelState.IsValid)
             {
@@ -87,6 +116,12 @@ namespace MVC_Project.Web.Controllers
 
                 return View(employee);
             }
+            if (await _emprepo.EmailAvailable(employee.Email))
+            {
+                ModelState.AddModelError("Email", "Employee email already exists.");
+                return View(employee);
+            }
+
 
             // ✅ Save logic
             await _emprepo.AddEmployee(employee);
@@ -134,7 +169,7 @@ namespace MVC_Project.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,EmployeeCode,Email,Phone,DateOfBirth,Gender,Designation,DepartmentId,AddressId,Role")] EmployeeUserVm employee)
         {
-
+            bool isAdmin = User.IsInRole("Admin");
             if (id != employee.Id)
             {
                 return NotFound();
@@ -142,13 +177,28 @@ namespace MVC_Project.Web.Controllers
 
             // Remove Salary from the model state validation if needed
             ModelState.Remove("Salary");
-
+            ModelState.Remove("address");
             if (ModelState.IsValid)
-            {
-                await _emprepo.EditEmployee(id,employee);
+            { 
+                ViewBag.Departments = new SelectList(_deptrepo.GetAllDepartment().Result, "Id", "Name");
+                ViewBag.Addresses = new SelectList(_addrepo.GetAllAddress().Result, "Id", "Street");
+                var existingEmployee = await _emprepo.GetEmployeeById(id);
+                if (isAdmin && existingEmployee.User.Role == UserRole.Admin && employee.Role != UserRole.Admin)
+                {
+                    var adminCount = await _userrepo.adminCountAsync();
+
+                    if (adminCount <= 1)
+                    {
+                        ModelState.AddModelError(string.Empty,
+                            "System must have at least one Admin.");
+                        return View(employee);
+                    }
+                }
+                await _emprepo.EditEmployee(id, employee, isAdmin);
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+
+            return RedirectToAction(nameof(Edit));
         }
 
         //GET: Employees/Delete/5
@@ -165,6 +215,7 @@ namespace MVC_Project.Web.Controllers
                 return NotFound();
             }
 
+
             return View(employee);
         }
 
@@ -173,8 +224,41 @@ namespace MVC_Project.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var employee = await _emprepo.GetEmployeeById(id);
+
+            if (employee == null)
+                return NotFound();
+
+            var currentUserId = int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            //Prevent self delete
+            if (employee.UserId == currentUserId)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "You cannot delete your own account.");
+
+                return View(employee);
+            }
+
+            //Prevent deleting last admin
+            if (employee.User.Role == UserRole.Admin)
+            {
+                var adminCount = await _userrepo.adminCountAsync();
+
+                if (adminCount <= 1)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "System must have at least one Admin.");
+
+                    return View(employee);
+                }
+            }
+
             await _emprepo.DeleteEmployee(id);
+
             return RedirectToAction(nameof(Index));
+
         }
 
         // POST: Employees/Create
@@ -201,7 +285,6 @@ namespace MVC_Project.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
 
     }
 }

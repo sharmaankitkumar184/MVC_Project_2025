@@ -39,8 +39,13 @@ namespace MVC_Project.Models.ViewModel
 
         public int? AddressId { get; set; }
 
+        public int? ManagerId { get; set; }
+        
+
         // User fields
         public UserRole Role { get; set; }
+
+        public Address address { get; set; }
     }
 
 }

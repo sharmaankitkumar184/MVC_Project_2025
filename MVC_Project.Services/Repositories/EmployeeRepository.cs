@@ -5,6 +5,7 @@ using MVC_Project.Services.Data;
 using MVC_Project.Services.Repositories.IRepository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace MVC_Project.Services.Repositories
 {
@@ -34,31 +35,31 @@ namespace MVC_Project.Services.Repositories
            .FirstOrDefaultAsync(m => m.Id == id);
             return employee;
         }
-        public async Task<Employee> AddEmployee(Employee employee)
+        public async Task<EmployeeUserVm> AddEmployee(EmployeeUserVm employee)
         {
             if (employee == null)
                 throw new ArgumentNullException(nameof(employee));
+            var nextEmployeeCode = await GenerateNextEmployeeCode();
 
             var rawName = employee.Name?.Trim() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(rawName))
                 throw new ArgumentException("Employee name is required");
 
-            var nameWithoutSpaces = rawName.Replace(" ", "");
-            char firstInitial = char.ToLower(rawName[0]);
+            char firstInitial = char.ToLower(rawName[0]) ;
 
             int spaceIndex = rawName.IndexOf(' ');
             char secondInitial = (spaceIndex > 0 && spaceIndex + 1 < rawName.Length)
                 ? char.ToLower(rawName[spaceIndex + 1])
                 : firstInitial;
-            var Password = $"{nameWithoutSpaces}@184";
+            // remove spaces
+            var nameWithoutSpaces = rawName.Replace(" ", "").ToLower();
 
-            string username = $"{firstInitial}{secondInitial}{employee.EmployeeCode}";
+            // capitalize only first letter
+            var formattedName = char.ToUpper(nameWithoutSpaces[0]) + nameWithoutSpaces.Substring(1);
 
-            bool emailExists = await _db.Employees
-                .AnyAsync(e => e.Email.ToLower() == employee.Email.ToLower());
+            var Password = $"{formattedName}@184";
 
-            if (emailExists)
-                throw new InvalidOperationException("Email already exists");
+            string username = $"{firstInitial}{secondInitial}{nextEmployeeCode}".ToUpper();
 
             using var transaction = await _db.Database.BeginTransactionAsync();
 
@@ -79,11 +80,26 @@ namespace MVC_Project.Services.Repositories
 
                 _db.Users.Add(user);
                 await _db.SaveChangesAsync(); // generates user.Id
+                                              // Create User
+                var updatedemployee = new Employee
+                {
+                    
 
-                // Link employee to user
-                employee.UserId = user.Id;
-
-                _db.Employees.Add(employee);
+                    // 2️⃣ Update EMPLOYEE fields
+                    EmployeeCode = nextEmployeeCode.ToString(),
+                    Name = employee.Name,
+                    Email = employee.Email,
+                    Phone = employee.Phone,
+                    DateOfBirth = employee.DateOfBirth,
+                    Gender = employee.Gender,
+                    DepartmentId = employee.DepartmentId,
+                    AddressId = employee.AddressId,
+                    ManagerId = employee.ManagerId,
+                    // Link employee to user
+                    UserId = user.Id,
+                    Designation = employee.Designation
+                };
+                _db.Employees.Add(updatedemployee);
                 await _db.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -98,7 +114,7 @@ namespace MVC_Project.Services.Repositories
         }
 
 
-        public async Task<Employee> EditEmployee(int? id, EmployeeUserVm updatedEmployee)
+        public async Task<Employee> EditEmployee(int? id, EmployeeUserVm updatedEmployee,bool isAdmin)
         {
             if (updatedEmployee == null)
                 throw new ArgumentNullException(nameof(updatedEmployee));
@@ -125,6 +141,7 @@ namespace MVC_Project.Services.Repositories
                 employee.DepartmentId = updatedEmployee.DepartmentId;
                 employee.AddressId = updatedEmployee.AddressId;
 
+
                 // 3️⃣ Update USER fields (same logic as Create)
                 if (employee.User != null)
                 {
@@ -132,7 +149,11 @@ namespace MVC_Project.Services.Repositories
                     employee.User.Email = updatedEmployee.Email ?? string.Empty;
                     employee.User.PhoneNumber = updatedEmployee.Phone ?? string.Empty;
                     employee.User.AddressId = updatedEmployee.AddressId;
-                    employee.User.Role = updatedEmployee.Role;
+                    if (isAdmin)
+                    {
+                        employee.User.Role = updatedEmployee.Role;
+                    }
+
                 }
 
                 await _db.SaveChangesAsync();
@@ -167,10 +188,28 @@ namespace MVC_Project.Services.Repositories
             {
                 throw new ArgumentNullException(nameof(empName), "Employee name cannot be null");
             }
-            return await Task.FromResult(_db.Employees
+            return await Task.FromResult(_db.Employees.Include(e => e.Department).Include(f => f.Address).Include(s => s.Salary)
                                 .Where(e => e.Name.ToLower().Contains(empName.ToLower())).AsQueryable());
 
         }
+
+        public async Task<int> GenerateNextEmployeeCode()
+        {
+            var lastCode = await _db.Employees
+                .OrderByDescending(e => e.EmployeeCode)
+                .Select(e => e.EmployeeCode)
+                .FirstOrDefaultAsync();
+
+            return Convert.ToInt32(lastCode) == 0 ? 3355 : Convert.ToInt32(lastCode) + 1;
+        }
+        public async Task<bool> EmailAvailable(string Email)
+        {
+            bool emailExists = await _db.Employees
+                .AnyAsync(e => e.Email.ToLower() == Email.ToLower());
+            return emailExists;
+
+        }
+
 
     }
 }

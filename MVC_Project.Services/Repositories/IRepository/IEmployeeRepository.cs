@@ -13,10 +13,13 @@ namespace MVC_Project.Services.Repositories.IRepository
 
         Task<IQueryable<Employee>> GetAllEmployee();
         Task<Employee?> GetEmployeeById(int? id);
-        Task<Employee> AddEmployee(Employee employee);
-        Task<Employee> EditEmployee(int? id, EmployeeUserVm updatedEmployee);
+        Task<EmployeeUserVm> AddEmployee(EmployeeUserVm employee);
+        Task<Employee> EditEmployee(int? id, EmployeeUserVm updatedEmployee,bool isAdmin);
         Task<Employee> DeleteEmployee(int? id);
         Task<IQueryable<Employee>?> SearchEmployee(string empName);
+
+        Task<int> GenerateNextEmployeeCode();
+        Task<bool> EmailAvailable(string Email);
 
     }
 }
