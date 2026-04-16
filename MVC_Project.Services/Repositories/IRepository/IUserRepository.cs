@@ -17,6 +17,8 @@ namespace MVC_Project.Services.Repositories.IRepository
 
         Task<UserData> GetUserDetailsByPhoneAsync(string PhoneNumber);
 
+        Task<UserData> GetUserDetailsByUserIdAsync(int userId);
+
         Task<UserData> GetByResetTokenAsync(string token, string email);
 
         Task UpdateAsync(UserData user);

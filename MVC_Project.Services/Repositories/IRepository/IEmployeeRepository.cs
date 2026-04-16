@@ -13,6 +13,7 @@ namespace MVC_Project.Services.Repositories.IRepository
 
         Task<IQueryable<Employee>> GetAllEmployee();
         Task<Employee?> GetEmployeeById(int? id);
+        Task<Employee?> GetEmployeeByUserId(int? userid);
         Task<EmployeeUserVm> AddEmployee(EmployeeUserVm employee);
         Task<Employee> EditEmployee(int? id, EmployeeUserVm updatedEmployee,bool isAdmin);
         Task<Employee> DeleteEmployee(int? id);
@@ -20,6 +21,10 @@ namespace MVC_Project.Services.Repositories.IRepository
 
         Task<int> GenerateNextEmployeeCode();
         Task<bool> EmailAvailable(string Email);
+
+        // Update profile image path for an employee by their user id
+        Task<bool> UpdateProfileImagePathByUserIdAsync(int userId, string imagePath);
+            
 
     }
 }

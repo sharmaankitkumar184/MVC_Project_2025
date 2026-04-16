@@ -1,0 +1,73 @@
+@model MVC_Project.Models.Models.Salaries
+@{
+    ViewData["Title"] = "Create Salary";
+}
+
+<div class="form-header">
+    <h1><i class="bi bi-plus-circle me-2"></i>Create New Salary Record</h1>
+    <p class="mb-0 mt-2 opacity-75">Add a new salary entry for an employee</p>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-person me-2"></i>Select Employee
+                </label>
+                @{
+                    var _items = new SelectList(ViewBag.Employees, "EmployeeCode", "Name");
+                }
+                <select asp-for="EmployeeCode" class="form-select" asp-items="@(_items)" required>
+                    <option value="">-- Choose an Employee --</option>
+                </select>
+                <span asp-validation-for="EmployeeCode" class="text-danger small mt-2 d-block"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-cash me-2"></i>Base Salary
+                        </label>
+                        <input asp-for="BaseSalary" class="form-control" type="number" step="0.01" placeholder="0.00" required>
+                        <span asp-validation-for="BaseSalary" class="text-danger small mt-2 d-block"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-gift me-2"></i>Bonus
+                        </label>
+                        <input asp-for="Bonus" class="form-control" type="number" step="0.01" placeholder="0.00">
+                        <span asp-validation-for="Bonus" class="text-danger small mt-2 d-block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="bi bi-dash-circle me-2"></i>Deductions
+                </label>
+                <input asp-for="Deductions" class="form-control" type="number" step="0.01" placeholder="0.00">
+                <span asp-validation-for="Deductions" class="text-danger small mt-2 d-block"></span>
+            </div>
+
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Net Salary Formula:</strong> Base Salary + Bonus - Deductions
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>Create Salary
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

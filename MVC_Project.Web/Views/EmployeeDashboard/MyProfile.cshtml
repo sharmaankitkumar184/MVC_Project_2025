@@ -1,0 +1,214 @@
+﻿@using MVC_Project.Models.ViewModel
+@model EmployeeProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-4">
+
+    @* Page-level TempData alerts shown at top of MyProfile *@
+    @{
+        var success = TempData["Success"] ?? TempData["SuccessMessage"];
+        var error = TempData["Error"] ?? TempData["ErrorMessage"];
+    }
+    @if (success != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @success
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    else if (error != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- HEADER SECTION -->
+    <div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
+        <div class="row align-items-center">
+            <form asp-action="UploadProfileImage" method="post" enctype="multipart/form-data" id="profileImageForm">
+
+            <!-- Profile Image -->
+            <div class="col-md-3 text-center position-relative">
+
+                @{ var cacheBuster = TempData["ProfileImageCacheBuster"] as string; }
+                <img src="@(string.IsNullOrEmpty(Model.ProfileImagePath)
+                             ? Url.Content("~/images/default-profile.png")
+                             : Url.Content(Model.ProfileImagePath) + (cacheBuster != null ? "?v=" + cacheBuster : String.Empty))"
+                     class="rounded-circle shadow profile-img"
+                     width="140"
+                     height="140" />
+
+                    <!-- Edit Icon -->
+                    <button type="button"
+                            class="btn btn-primary btn-sm position-absolute edit-img-btn"
+                            onclick="openFileInput()">
+                        ✏
+                    </button>
+
+                    <!-- Hidden File Input -->
+                    <input type="file"
+                           name="ProfileImageFile"
+                           id="profileImageInput"
+                           accept="image/*"
+                           style="display:none"
+                           onchange="uploadImage()" />
+
+                <div class="mt-3">
+                    <a asp-action="EditProfile" class="btn btn-primary btn-sm px-4">
+                        Edit Profile
+                    </a>
+                </div>
+
+            </div>
+            </form>
+            <!-- Name & Stats -->
+            <div class="col-md-9">
+                <h3 class="fw-bold mb-1">@Model.FullName</h3>
+                <p class="text-muted mb-3">@Model.Designation</p>
+
+                <div class="d-flex gap-3 flex-wrap">
+
+                    <span class="badge bg-light text-dark px-4 py-2 shadow-sm">
+                        Activities: @Model.Activities
+                    </span>
+
+                    <span class="badge bg-light text-dark px-4 py-2 shadow-sm">
+                        Department: @Model.DepartmentName
+                    </span>
+
+                    <span class="badge bg-light text-dark px-4 py-2 shadow-sm">
+                        Role: @Model.Role
+                    </span>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- TABS CARD -->
+    <div class="card shadow-sm border-0 rounded-4">
+
+        <!-- Nav Tabs -->
+        <ul class="nav nav-tabs profile-tabs px-3 pt-3" id="profileTabs" role="tablist">
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active"
+                        id="details-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#details"
+                        type="button"
+                        role="tab">
+                    Employee Details
+                </button>
+            </li>
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        id="payroll-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#payroll"
+                        type="button"
+                        role="tab">
+                    Payroll
+                </button>
+            </li>
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        id="leaves-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#leaves"
+                        type="button"
+                        role="tab">
+                    Leaves
+                </button>
+            </li>
+
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content p-4">
+
+            <!-- DETAILS -->
+            <div class="tab-pane fade show active"
+                 id="details"
+                 role="tabpanel">
+
+                <h5 class="fw-semibold mb-3">Basic Information</h5>
+                <hr />
+
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong>Employee Code:</strong> @Model.EmployeeCode</div>
+                    <div class="col-md-4"><strong>Gender:</strong> @Model.Gender</div>
+                    <div class="col-md-4"><strong>Date of Birth:</strong> @Model.DateOfBirth.ToShortDateString()</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong>Department:</strong> @Model.DepartmentName</div>
+                    <div class="col-md-4"><strong>Project:</strong> @(Model.ProjectName ?? "Not Assigned")</div>
+                    <div class="col-md-4"><strong>Manager:</strong> @(Model.ManagerName ?? "Not Assigned")</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4"><strong>Blood Group:</strong> @Model.BloodGroup</div>
+                    <div class="col-md-4"><strong>Time Zone:</strong> @Model.TimeZone</div>
+                    <div class="col-md-4"><strong>Company:</strong> @Model.CompanyName</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12"><strong>Address:</strong> @Model.Address</div>
+                </div>
+
+            </div>
+
+            <!-- PAYROLL -->
+            <div class="tab-pane fade"
+                 id="payroll"
+                 role="tabpanel">
+
+                <h5 class="fw-semibold">Payroll Information</h5>
+                <hr />
+                <p class="text-muted">Payroll module coming soon...</p>
+
+            </div>
+
+            <!-- LEAVES -->
+            <div class="tab-pane fade"
+                 id="leaves"
+                 role="tabpanel">
+
+                <h5 class="fw-semibold">Leave Information</h5>
+                <hr />
+                <p class="text-muted">Leave module coming soon...</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function openFileInput() {
+        document.getElementById("profileImageInput").click();
+    }
+
+    function uploadImage() {
+        document.getElementById("profileImageForm").submit();
+    }
+
+</script>
+
+@if (TempData["Success"] != null) {
+  <div class="alert alert-success"> @TempData["Success"] </div>
+} else if (TempData["Error"] != null) {
+  <div class="alert alert-danger"> @TempData["Error"] </div>
+}

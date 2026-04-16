@@ -12,6 +12,7 @@ namespace MVC_Project.Models.ViewModel
         public int EmployeeCount { get; set; }
         public int DepartmentCount { get; set; }
         public int ProjectCount { get; set; }
+        public decimal TotalPayroll { get; set; }
 
         public List<Employee> RecentEmployees { get; set; } = new();
         public List<string> ProjectDepartmentNames { get; set; } = new();

@@ -32,16 +32,21 @@ namespace MVC_Project.Web.Controllers
         {
             var recentEmployees = await _dashboardRepo.GetRecentEmployees();
             var (deptNames, projectCounts) = await _dashboardRepo.GetProjectCountByDepartment();
+            var totalPayroll = await _dashboardRepo.GetTotalPayrollAsync();
 
             var model = new HomeDashboardViewModel
             {
                 EmployeeCount = await _dashboardRepo.GetEmployeeCount(),
                 DepartmentCount = await _dashboardRepo.GetDepartmentCount(),
                 ProjectCount = await _dashboardRepo.GetProjectCount(),
+                // expose payroll total to view
+                // note: add property in viewmodel
                 RecentEmployees = recentEmployees,
                 ProjectDepartmentNames = deptNames,
                 ProjectCounts = projectCounts
             };
+
+            ViewBag.TotalPayroll = totalPayroll;
 
             return View(model);
         }

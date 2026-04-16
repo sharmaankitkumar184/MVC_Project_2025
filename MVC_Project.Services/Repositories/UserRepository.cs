@@ -46,6 +46,10 @@ namespace MVC_Project.Services.Repositories
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == PhoneNumber);
         }
+        public async Task<UserData> GetUserDetailsByUserIdAsync(int userId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        }
 
         public async Task<UserData> GetByResetTokenAsync(string token, string email)
         {

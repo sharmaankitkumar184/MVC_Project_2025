@@ -51,5 +51,15 @@ namespace MVC_Project.Services.Repositories
         {
             return await _db.Projects.CountAsync();
         }
+
+        public async Task<decimal> GetTotalPayrollAsync()
+        {
+            // Sum BaseSalary + Bonus - Deductions across all salary records
+            var total = await _db.Salary
+                .Select(s => (decimal?) (s.BaseSalary + s.Bonus - s.Deductions))
+                .SumAsync();
+
+            return total ?? 0m;
+        }
     }
 }

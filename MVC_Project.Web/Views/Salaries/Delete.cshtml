@@ -1,0 +1,52 @@
+@model MVC_Project.Models.Models.Salaries
+@{
+    ViewData["Title"] = "Delete Salary";
+}
+
+<div class="delete-header">
+    <h1><i class="bi bi-trash me-2"></i>Delete Salary Record</h1>
+    <p class="mb-0 mt-2 opacity-75">This action cannot be undone. Please confirm the details below.</p>
+</div>
+
+<div class="warning-alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Warning!</strong> You are about to permanently delete this salary record. This action cannot be reversed.
+</div>
+
+<div class="card delete-card">
+    <div class="card-body">
+        <h5 class="mb-4"><i class="bi bi-info-circle me-2"></i>Salary Details</h5>
+
+        <div class="detail-row">
+            <div class="detail-label"><i class="bi bi-person me-2"></i>Employee</div>
+            <div class="detail-value">@Model.Employee?.Name</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label"><i class="bi bi-id-card me-2"></i>Code</div>
+            <div class="detail-value">@Model.EmployeeCode</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label"><i class="bi bi-cash me-2"></i>Base Salary</div>
+            <div class="detail-value">@Model.BaseSalary.ToString("C")</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label"><i class="bi bi-wallet2 me-2"></i>Net Salary</div>
+            <div class="detail-value">@(Model.BaseSalary + Model.Bonus - Model.Deductions).ToString("C")</div>
+        </div>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="button-group">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-2"></i>Yes, Delete This Record
+        </button>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-x-circle me-2"></i>Cancel
+        </a>
+    </div>
+</form>
