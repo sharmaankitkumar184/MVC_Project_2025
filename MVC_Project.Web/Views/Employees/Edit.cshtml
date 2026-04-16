@@ -6,143 +6,166 @@
     ViewData["Title"] = "Edit Employee";
 }
 
-<div class="container mt-5 mb-5">
-    <h1 class="text-center text-primary mb-4">Edit Employee</h1>
+<div class="form-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-pencil-square me-3"></i>Edit Employee</h1>
+            <p>Update employee information and details</p>
+        </div>
+    </div>
+</div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Employee Information</h4>
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="Edit">
+            <!-- Validation Summary -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-alert alert-danger">
+                    <strong><i class="bi bi-exclamation-circle me-2"></i>Validation Error</strong>
+                    @Html.ValidationSummary(false)
                 </div>
-                <div class="card-body">
-                    <form asp-action="Edit">
+            }
 
-                        @* Universal error for Model *@
-                        @if (!ViewData.ModelState.IsValid)
-                        {
-                            <div class="alert alert-danger validation-alert">
-                                @Html.ValidationSummary(false)
-                            </div>
-                        }
+            <!-- Hidden Fields -->
+            <input type="hidden" asp-for="Id" />
 
-                        <!-- Hidden Id Field -->
-                        <input type="hidden" asp-for="Id" />
-
-                        <!-- Name -->
-                        <div class="form-group mb-4">
-                            <label asp-for="Name" class="form-label">Full Name</label>
-                            <input asp-for="Name" class="form-control shadow-sm" placeholder="Enter employee name" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
-                        </div>
-
-                        <!-- Employee Code -->
-                        <div class="form-group mb-4">
-                            <label asp-for="EmployeeCode" class="form-label">Employee Code</label>
-                            <input asp-for="EmployeeCode" class="form-control shadow-sm" placeholder="Enter employee code" />
-                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="form-group mb-4">
-                            <label asp-for="Email" class="form-label">Email</label>
-                            <input asp-for="Email" type="email" class="form-control shadow-sm" placeholder="Enter email" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="form-group mb-4">
-                            <label asp-for="Phone" class="form-label">Phone</label>
-                            <input asp-for="Phone" class="form-control shadow-sm" placeholder="Enter phone number" />
-                            <span asp-validation-for="Phone" class="text-danger"></span>
-                        </div>
-
-                        <!-- Date of Birth -->
-                        <div class="form-group mb-4">
-                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
-                            <input asp-for="DateOfBirth" type="date" class="form-control shadow-sm" />
-                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                        </div>
-
-                        <!-- Gender -->
-                        <div class="form-group mb-4">
-                            <label asp-for="Gender" class="form-label">Gender</label>
-                            <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-select shadow-sm">
-                                <option value="">Select Gender</option>
-                            </select>
-                            <span asp-validation-for="Gender" class="text-danger"></span>
-                        </div>
-                        <!-- Designation -->
-                        <div class="form-group mb-4">
-                            <label asp-for="Designation" class="form-label">Designation</label>
-                            <select asp-for="Designation" asp-items="Html.GetEnumSelectList<Designation>()" class="form-select shadow-sm">
-                                <option value="">Select Designation</option>
-                            </select>
-                            <span asp-validation-for="Designation" class="text-danger"></span>
-                        </div>
-                        
-
-                        <!-- Department -->
-                        <div class="form-group mb-4">
-                            <label asp-for="DepartmentId" class="form-label">Department</label>
-                            <select asp-for="DepartmentId" class="form-select shadow-sm" asp-items="ViewBag.Departments">
-                                <option value="">Select Department</option>
-                            </select>
-                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
-                        </div>
-
-                        <!-- Address -->
-                        <div class="form-group mb-4">
-                            <label asp-for="AddressId" class="form-label">Address</label>
-                            <select asp-for="AddressId" class="form-select shadow-sm" asp-items="ViewBag.Addresses">
-                                <option value="">Select Address</option>
-                            </select>
-                            <span asp-validation-for="AddressId" class="text-danger"></span>
-                        </div>
-                         @if (User.IsInRole("Admin"))
-                            {
-                                <div class="form-group mb-3">
-                                    <label asp-for="Role" class="form-label">Role</label>
-                                    <select asp-for="Role"
-                                    asp-items="Html.GetEnumSelectList<UserRole>()"
-                                    class="form-select shadow-sm">
-                                        <option value="">Select Role</option>
-                                    </select>
-                                    <span asp-validation-for="Role" class="text-danger"></span>
-                                </div>
-                            }
-                        else
-                        {
-                            <div class="form-group mb-3">
-                                    <label asp-for="Role" class="form-label">Role</label>
-                            <select asp-for="Role"
-                                    asp-items="Html.GetEnumSelectList<UserRole>()"
-                                        class="form-select shadow-sm"
-                                    disabled>
-                            </select>
-
-                            <!-- 🔴  message -->
-                                <div class="alert alert-warning py-1 mt-2">
-                                    <i class="bi bi-shield-lock me-1"></i>
-                                    Role modification is restricted to administrators.
-                                </div>
-
-
-                            <!-- Hidden field to preserve value -->
-                            <input type="hidden" asp-for="Role" />
-                            </div>
-                        }
-
-                        <div class="form-group mb-4">
-                            <button type="submit" class="btn btn-primary w-100 shadow-sm">Save</button>
-                        </div>
-                    </form>
+            <!-- Personal Information Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-person-fill" style="color: #667eea;"></i>
+                    Personal Information
                 </div>
-                <div class="card-footer text-center pt-3 pb-3">
-                    <a asp-action="Index" class="btn btn-outline-secondary w-100">Back to List</a>
+
+                <div class="two-col-row">
+                    <div class="form-group">
+                        <label asp-for="Name"><i class="bi bi-person me-2"></i>Full Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter employee name" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="EmployeeCode"><i class="bi bi-hash me-2"></i>Employee Code</label>
+                        <input asp-for="EmployeeCode" class="form-control" placeholder="Code" disabled />
+                        <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="two-col-row">
+                    <div class="form-group">
+                        <label asp-for="DateOfBirth"><i class="bi bi-calendar-event me-2"></i>Date of Birth</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" required />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Gender"><i class="bi bi-person-badge me-2"></i>Gender</label>
+                        <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-select" required>
+                            <option value="">-- Select Gender --</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Contact Information Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-telephone-fill" style="color: #667eea;"></i>
+                    Contact Information
+                </div>
+
+                <div class="two-col-row">
+                    <div class="form-group">
+                        <label asp-for="Email"><i class="bi bi-envelope me-2"></i>Email</label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="employee@example.com" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Phone"><i class="bi bi-telephone me-2"></i>Phone</label>
+                        <input asp-for="Phone" class="form-control" placeholder="+1 (555) 000-0000" required />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Organization Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-building" style="color: #667eea;"></i>
+                    Organization
+                </div>
+
+                <div class="two-col-row">
+                    <div class="form-group">
+                        <label asp-for="Designation"><i class="bi bi-briefcase me-2"></i>Designation</label>
+                        <select asp-for="Designation" asp-items="Html.GetEnumSelectList<Designation>()" class="form-select" required>
+                            <option value="">-- Select Designation --</option>
+                        </select>
+                        <span asp-validation-for="Designation" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DepartmentId"><i class="bi bi-diagram-3 me-2"></i>Department</label>
+                        <select asp-for="DepartmentId" class="form-select" asp-items="ViewBag.Departments" required>
+                            <option value="">-- Select Department --</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="AddressId"><i class="bi bi-geo-alt me-2"></i>Address</label>
+                    <select asp-for="AddressId" class="form-select" asp-items="ViewBag.Addresses">
+                        <option value="">-- Select Address --</option>
+                    </select>
+                    <span asp-validation-for="AddressId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Role Section (Admin Only) -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-shield-lock" style="color: #667eea;"></i>
+                    Access Control
+                </div>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="form-group">
+                        <label asp-for="Role"><i class="bi bi-key me-2"></i>User Role</label>
+                        <select asp-for="Role" asp-items="Html.GetEnumSelectList<UserRole>()" class="form-select" required>
+                            <option value="">-- Select Role --</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="Role"><i class="bi bi-key me-2"></i>User Role</label>
+                        <select asp-for="Role" asp-items="Html.GetEnumSelectList<UserRole>()" class="form-select" disabled>
+                        </select>
+                        <div class="alert alert-warning">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Role modification is restricted to administrators.
+                        </div>
+                        <input type="hidden" asp-for="Role" />
+                    </div>
+                }
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>Save Changes
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 

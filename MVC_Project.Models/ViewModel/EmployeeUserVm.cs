@@ -33,6 +33,11 @@ namespace MVC_Project.Models.ViewModel
         public Gender Gender { get; set; }
         [Required]
         public Designation Designation { get; set; }
+        //Extra Fields for Personal Details
+        public string? BloodGroup { get; set; }
+        public string? TimeZone { get; set; }
+        public string? CompanyName { get; set; }
+        public string ProfileImagePath { get; set; }
 
         [Required]
         public int DepartmentId { get; set; }
@@ -46,6 +51,8 @@ namespace MVC_Project.Models.ViewModel
         public UserRole Role { get; set; }
 
         public Address address { get; set; }
+
+
     }
 
 }

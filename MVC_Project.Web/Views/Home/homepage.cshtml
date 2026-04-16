@@ -3,61 +3,170 @@
 @{
     ViewData["Title"] = "Dashboard - Home";
 }
-<h1 style="text-align:center; padding:15px 0px 35px 0px;">Welcome to the Company Dashboard</h1>
 
-<div class="row text-center mb-4">
-    <div class="col">
-        <div class="card text-dark border">
-            <div class="card-body">
-                <h5 class="card-title">Total Employees</h5>
-                <p class="card-text display-6">@Model.EmployeeCount</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <div class="card text-dark border">
-            <div class="card-body">
-                <h5 class="card-title">Departments</h5>
-                <p class="card-text display-6">@Model.DepartmentCount</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <div class="card text-dark border">
-            <div class="card-body">
-                <h5 class="card-title">Projects</h5>
-                <p class="card-text display-6">@Model.ProjectCount</p>
-            </div>
-        </div>
+<div class="dashboard-header">
+    <div class="container">
+        <h1><i class="bi bi-speedometer2 me-3"></i>Company Dashboard</h1>
+        <p>Overview of your organization's key metrics and activities</p>
     </div>
 </div>
 
-<h3 class="mt-5">Recently Joined Employees</h3>
-<div class="row">
-    @foreach (var emp in Model.RecentEmployees)
-    {
-        <div class="col-md-4 mb-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5>@emp.Name</h5>
-                    <p class="text-muted">@emp.Department?.Name</p>
-                    <p>Email: @(string.IsNullOrEmpty(emp.Email) ? "N/A" : emp.Email)</p>
-                    <p>Phone: @(string.IsNullOrEmpty(emp.Phone) ? "N/A" : emp.Phone)</p>
+<!-- KPI Cards Section -->
+<div class="kpi-section">
+    <div class="row">
+        <!-- Total Employees Card -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="kpi-card kpi-employees">
+                <div class="kpi-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="kpi-content">
+                    <h6>Total Employees</h6>
+                    <p class="kpi-number">@Model.EmployeeCount</p>
                 </div>
             </div>
         </div>
+
+        <!-- Departments Card -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="kpi-card kpi-departments">
+                <div class="kpi-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="kpi-content">
+                    <h6>Departments</h6>
+                    <p class="kpi-number">@Model.DepartmentCount</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Card -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="kpi-card kpi-projects">
+                <div class="kpi-icon">
+                    <i class="bi bi-kanban"></i>
+                </div>
+                <div class="kpi-content">
+                    <h6>Projects</h6>
+                    <p class="kpi-number">@Model.ProjectCount</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Payroll Card -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="kpi-card kpi-payroll">
+                <div class="kpi-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <div class="kpi-content">
+                    <h6>Total Payroll</h6>
+                    <p class="kpi-number">
+                        @{
+                            var payroll = (decimal)ViewBag.TotalPayroll;
+                            string formattedPayroll;
+                            if (payroll >= 1000000)
+                                formattedPayroll = "$" + (payroll / 1000000).ToString("F1") + "M";
+                            else if (payroll >= 1000)
+                                formattedPayroll = "$" + (payroll / 1000).ToString("F0") + "K";
+                            else
+                                formattedPayroll = payroll.ToString("C0");
+                        }
+                        @formattedPayroll
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recently Joined Employees Section -->
+<div class="section-container">
+    <div class="section-header">
+        <h3><i class="bi bi-person-plus me-2"></i>Recently Joined Employees</h3>
+        <p class="section-subtitle">Latest additions to your team</p>
+    </div>
+
+    @if (Model.RecentEmployees.Any())
+    {
+        <div class="row">
+            @foreach (var emp in Model.RecentEmployees)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="employee-card-dashboard">
+                        <div class="employee-card-header">
+                            <div class="employee-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="employee-name-section">
+                                <h5>@emp.Name</h5>
+                                <p class="designation">@emp.Designation</p>
+                            </div>
+                        </div>
+
+                        <div class="employee-card-body">
+                            <div class="info-item">
+                                <i class="bi bi-building"></i>
+                                <span>@(emp.Department?.Name ?? "N/A")</span>
+                            </div>
+
+                            <div class="info-item">
+                                <i class="bi bi-envelope"></i>
+                                <span>@(string.IsNullOrEmpty(emp.Email) ? "N/A" : emp.Email)</span>
+                            </div>
+
+                            <div class="info-item">
+                                <i class="bi bi-telephone"></i>
+                                <span>@(string.IsNullOrEmpty(emp.Phone) ? "N/A" : emp.Phone)</span>
+                            </div>
+                        </div>
+
+                        <div class="employee-card-footer">
+                            <a asp-controller="Employees" asp-action="Details" asp-route-id="@emp.Id" class="btn btn-sm btn-view-profile">
+                                <i class="bi bi-eye me-1"></i>View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>No recent employees</p>
+        </div>
     }
 </div>
 
-<h3 class="mt-5">Projects per Department</h3>
-<ul class="list-group">
-    @for (int i = 0; i < Model.ProjectDepartmentNames.Count; i++)
+<!-- Projects per Department Section -->
+<div class="section-container">
+    <div class="section-header">
+        <h3><i class="bi bi-diagram-2 me-2"></i>Projects by Department</h3>
+        <p class="section-subtitle">Distribution of projects across departments</p>
+    </div>
+
+    @if (Model.ProjectDepartmentNames.Any())
     {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            @Model.ProjectDepartmentNames[i]
-            <span class="badge bg-secondary rounded-pill">@Model.ProjectCounts[i]</span>
-        </li>
+        <div class="projects-list">
+            @for (int i = 0; i < Model.ProjectDepartmentNames.Count; i++)
+            {
+                <div class="project-item">
+                    <div class="project-info">
+                        <i class="bi bi-building me-2"></i>
+                        <span class="department-name">@Model.ProjectDepartmentNames[i]</span>
+                    </div>
+                    <span class="project-badge">@Model.ProjectCounts[i]</span>
+                </div>
+            }
+        </div>
     }
-</ul>
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>No projects found</p>
+        </div>
+    }
+</div>

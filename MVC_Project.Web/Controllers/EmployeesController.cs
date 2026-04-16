@@ -263,6 +263,7 @@ namespace MVC_Project.Web.Controllers
 
         // POST: Employees/Create
         [HttpGet, HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Search(int? page, string empName, int pageSize = 9)
         {
             if (ModelState.IsValid)

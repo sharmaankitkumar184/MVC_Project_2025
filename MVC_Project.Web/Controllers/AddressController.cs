@@ -19,6 +19,7 @@ namespace MVC_Project.Web.Controllers
 
         // POST: Address/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromBody] Address newAddress)
         {
 

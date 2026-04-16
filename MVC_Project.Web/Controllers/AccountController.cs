@@ -38,6 +38,7 @@ namespace MVC_Project.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
@@ -88,7 +89,7 @@ namespace MVC_Project.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "EmployeeDashboard");
+                return RedirectToAction("MyProfile", "EmployeeDashboard");
             }
 
         }
@@ -101,6 +102,7 @@ namespace MVC_Project.Web.Controllers
         }
 
     [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(string email)
         {
             // Step 1: Check if email exists
@@ -152,6 +154,7 @@ namespace MVC_Project.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotEmail(string phoneNumber)
         {
             var user = _userRepo.GetUserDetailsByPhoneAsync(phoneNumber).Result;
@@ -205,6 +208,7 @@ namespace MVC_Project.Web.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword( string token,string email,string newPassword,string confirmPassword)
         {
             if (newPassword != confirmPassword)

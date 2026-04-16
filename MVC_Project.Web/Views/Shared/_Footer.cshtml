@@ -1,29 +1,86 @@
-﻿<footer class="py-4 mt-auto" id="mainFooter">
-    <div class="container text-center">
-        <div class="row">
-            <!-- Company Name & Copyright -->
-            <div class="col-md-4 mb-3" id="footerHeader">
-                <h5 class="fw-bold">MVC_Project.Web</h5>
-                <p class="small mb-0">&copy; 2025 - All Rights Reserved</p>
+﻿<footer class="custom-footer" id="mainFooter">
+    <div class="footer-content">
+        <div class="container">
+            <div class="row footer-grid">
+                <!-- Company Info -->
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="footer-section">
+                        <div class="footer-brand">
+                            <i class="bi bi-crosshair2"></i>
+                            <h5>OrgMaster</h5>
+                        </div>
+                        <p class="footer-description">
+                            A comprehensive organization management system designed to streamline employee management, project tracking, and payroll operations.
+                        </p>
+                        <p class="footer-copyright">&copy; 2025 OrgMaster. All Rights Reserved</p>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <div class="footer-section">
+                        <h6 class="footer-section-title">Quick Links</h6>
+                        <ul class="footer-links">
+                            <li>
+                                <a asp-area="" asp-controller="Home" asp-action="Homepage" class="footer-link">
+                                    <i class="bi bi-chevron-right"></i>Home
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="" asp-controller="Employees" asp-action="Index" class="footer-link">
+                                    <i class="bi bi-chevron-right"></i>Employees
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="footer-link">
+                                    <i class="bi bi-chevron-right"></i>Privacy Policy
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="footer-link">
+                                    <i class="bi bi-chevron-right"></i>Terms of Service
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-section">
+                        <h6 class="footer-section-title">Follow Us</h6>
+                        <p class="footer-social-label">Connect with us on social media</p>
+                        <div class="footer-social-links">
+                            <a href="#" class="social-link facebook" title="Facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="#" class="social-link twitter" title="Twitter">
+                                <i class="bi bi-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link linkedin" title="LinkedIn">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="#" class="social-link instagram" title="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Navigation Links -->
-            <div class="col-md-4 mb-3">
-                <h5 class="fw-bold">Quick Links</h5>
-                <ul class="list-unstyled">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Homepage" class="text-decoration-none quick-Links-Footer">Home</a></li>
-                    <li><a asp-area="" asp-controller="Employees" asp-action="Index" class="text-decoration-none quick-Links-Footer">Employees</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none quick-Links-Footer">Privacy Policy</a></li>
-                </ul>
-            </div>
+            <!-- Divider -->
+            <hr class="footer-divider">
 
-            <!-- Social Media Links -->
-            <div class="col-md-4 mb-3">
-                <h5 class="fw-bold">Follow Us</h5>
-                <a href="#" class="me-3 footer-Social-Links"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="me-3 footer-Social-Links"><i class="bi bi-twitter"></i></a>
-                <a href="#" class="me-3 footer-Social-Links"><i class="bi bi-linkedin"></i></a>
-                <a href="#" class="me-3 footer-Social-Links"><i class="bi bi-instagram"></i></a>
+            <!-- Bottom Footer -->
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="footer-bottom-text">Made with <i class="bi bi-heart-fill"></i> for better organization management</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="footer-bottom-text">Version 1.0 | Last Updated: January 2025</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

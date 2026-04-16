@@ -2,100 +2,125 @@
 @using X.PagedList.Mvc.Core
 
 @{
-    ViewData["Title"] = "Employee List";
-
+    ViewData["Title"] = "Employee Management";
     var employeeList = Model;
     bool isSearchActive = !string.IsNullOrEmpty(ViewBag.SearchQuery as string);
     bool hasRecords = employeeList != null && employeeList.Any();
-
 }
 
-<h1 class="text-center my-4">Employee List</h1>
-
-<div class="container">
-    <!-- Search Box -->
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-6">
-            <form class="d-flex justify-content-center align-items-center" asp-action="Search" id="searchForm">
-                <div class="input-group">
-                    <input class="form-control" type="text" name="empName" id="searchInput"
-                           placeholder="Search Employees" aria-label="Search" value="@ViewBag.SearchQuery">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search"></i> Search
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="clearSearch">Clear</button>
-                </div>
-            </form>
+<div class="employee-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-people-fill me-3"></i>Employee Management</h1>
+            <p>Manage and organize your workforce</p>
         </div>
+        <a asp-action="Create" class="btn btn-create-employee">
+            <i class="bi bi-plus-circle me-2"></i>Add New Employee
+        </a>
     </div>
+</div>
 
-    <!-- Create New Employee Button -->
-    <div class="text-center mb-4">
-        <a asp-action="Create" class="btn btn-success btn-lg">Create New Employee</a>
+<!-- Search Section -->
+<div class="search-section">
+    <form class="search-input-group" asp-action="Search" id="searchForm">
+        <input class="form-control" type="text" name="empName" id="searchInput"
+               placeholder="🔍 Search by employee name..." value="@ViewBag.SearchQuery">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search"></i> Search
+        </button>
+        <button type="button" class="btn btn-outline-secondary" id="clearSearch">
+            <i class="bi bi-x-circle"></i> Clear
+        </button>
+    </form>
+</div>
+
+<!-- No Results Alert -->
+@if (isSearchActive && !hasRecords)
+{
+    <div class="no-results-alert alert-warning">
+        <i class="bi bi-inbox" style="font-size: 2rem; color: #856404;"></i>
+        <h5 class="mt-2 text-dark">No Employees Found</h5>
+        <p class="text-dark mb-0">Try searching with a different name or create a new employee.</p>
     </div>
+}
+else
+{
+    <!-- Employee Cards Grid -->
+    <div class="row">
+        @foreach (var item in employeeList)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card employee-card">
+                    <span class="designation-badge">
+                        <i class="bi bi-briefcase me-1"></i>@item.Designation
+                    </span>
 
-    <!-- Show message if no employees found -->
-    @if (isSearchActive && !hasRecords)
-    {
-        <div class="alert alert-warning text-center">
-            <strong>No employees found.</strong> Try searching with a different name.
-        </div>
-    }
-    else
-    {
-        <!-- Employee List -->
-        <div class="row">
-            @foreach (var item in employeeList)
-            {
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="card shadow-sm">
-                        <!-- 🔥 Designation Badge -->
-                        <span class="designation-badge">
-                            <i class="fas fa-briefcase me-1"></i>
-                            @item.Designation
-                        </span>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <h6 class="card-subtitle">
+                            <i class="bi bi-hash"></i> @item.EmployeeCode
+                        </h6>
 
-                        <div class="card-body">
-                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">ID: @Html.DisplayFor(modelItem => item.EmployeeCode)</h6>
+                        <div class="employee-info-row">
+                            <span class="employee-info-label">
+                                <i class="bi bi-calendar-event" style="color: #667eea;"></i> DOB
+                            </span>
+                            <span class="employee-info-value">@item.DateOfBirth.ToString("dd MMM yyyy")</span>
+                        </div>
 
-                            <p class="card-text">
-                                <strong>Date of Birth:</strong> @item.DateOfBirth.ToString("dd-MMM-yyyy")
-                            </p>
+                        <div class="employee-info-row">
+                            <span class="employee-info-label">
+                                <i class="bi bi-envelope" style="color: #667eea;"></i> Email
+                            </span>
+                            <span class="employee-info-value">@(string.IsNullOrEmpty(item.Email) ? "N/A" : item.Email)</span>
+                        </div>
 
-                            <p class="card-text">
-                                <strong>Email:</strong> @(string.IsNullOrEmpty(item.Email) ? "N/A" : item.Email)
-                            </p>
+                        <div class="employee-info-row">
+                            <span class="employee-info-label">
+                                <i class="bi bi-telephone" style="color: #667eea;"></i> Phone
+                            </span>
+                            <span class="employee-info-value">@(string.IsNullOrEmpty(item.Phone) ? "N/A" : item.Phone)</span>
+                        </div>
 
-                            <p class="card-text">
-                                <strong>Phone:</strong> @(string.IsNullOrEmpty(item.Phone) ? "N/A" : item.Phone)
-                            </p>
-                            
-                            <p class="card-text">
-                                <strong>Department:</strong> @(item.Department != null ? item.Department.Name : "N/A")
-                            </p>
+                        <div class="employee-info-row">
+                            <span class="employee-info-label">
+                                <i class="bi bi-building" style="color: #667eea;"></i> Dept
+                            </span>
+                            <span class="info-badge badge-department">
+                                @(item.Department != null ? item.Department.Name : "N/A")
+                            </span>
+                        </div>
 
-                            <p class="card-text">
-                                <strong>Address:</strong>
-                                @(item.Address != null ? $"{item.Address.Street}, {item.Address.City}, {item.Address.ZipCode}" : "N/A")
-                            </p>
-
-                            <p class="card-text">
-                                <strong>Salary:</strong> @(item.Salary != null ? $"${item.Salary.NetSalary:F2}" : "N/A")
-                            </p>
-
-                            <div class="d-flex justify-content-between">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        @if (item.Salary != null)
+                        {
+                            <div class="employee-info-row">
+                                <span class="employee-info-label">
+                                    <i class="bi bi-wallet2" style="color: #667eea;"></i> Salary
+                                </span>
+                                <span class="info-badge badge-salary">
+                                    @(item.Salary.BaseSalary + item.Salary.Bonus - item.Salary.Deductions).ToString("C")
+                                </span>
                             </div>
+                        }
+
+                        <div class="action-buttons">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-edit" title="Edit Employee">
+                                <i class="bi bi-pencil me-1"></i> Edit
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-details" title="View Details">
+                                <i class="bi bi-eye me-1"></i> Details
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-delete" title="Delete Employee">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </a>
                         </div>
                     </div>
                 </div>
-            }
-        </div>
-    }
-</div>
+            </div>
+        }
+    </div>
+}
+
 <!-- Pagination + Page Size UI -->
 @if (hasRecords)
 {
@@ -130,25 +155,20 @@
             @Html.PagedListPager(Model, page => Url.Action("Search", new
             {
                 page,
-        empName = ViewBag.SearchQuery,
-        pageSize = ViewBag.PageSize
-        }), renderOptions)
+                empName = ViewBag.SearchQuery,
+                pageSize = ViewBag.PageSize
+            }), renderOptions)
         }
         else
         {
             @Html.PagedListPager(Model, page => Url.Action("Index", new
             {
                 page,
-        pageSize = ViewBag.PageSize
-        }), renderOptions)
+                pageSize = ViewBag.PageSize
+            }), renderOptions)
         }
-
-
     </div>
-
-
 }
-
 
 @section Scripts {
     <script>
@@ -163,27 +183,18 @@
         });
         var isSearchActive = @isSearchActive.ToString().ToLower();
 
-
-        console.log("isSearchActive Value:", isSearchActive);  // ✅ Debugging Output
-
         // JavaScript to Handle Page Size Change
         function changePageSize(empName, size) {
-            console.log("Inside changePageSize function");
-            console.log("isSearchActive:", isSearchActive);
-
             // ✅ Get empName from input field
             var empName = document.getElementById("searchInput") ? document.getElementById("searchInput").value.trim() : "";
 
             if (isSearchActive) {  // ✅ Works correctly as a Boolean now
                 var url = '@Url.Action("Search", new { page = 1 })' + '&empName=' + encodeURIComponent(empName) + '&pageSize=' + size;
-                console.log("Redirecting to search:", url);
                 window.location.href = url;
             } else {
                 var url = '@Url.Action("Index", new { page = 1 })' + '&pageSize=' + size;
-                console.log("Redirecting to:", url);
                 window.location.href = url;
             }
         }
-
     </script>
 }

@@ -35,6 +35,18 @@ namespace MVC_Project.Services.Repositories
            .FirstOrDefaultAsync(m => m.Id == id);
             return employee;
         }
+
+        public async Task<Employee?> GetEmployeeByUserId(int? userid)
+        {
+            if (userid == 0 || userid == null)
+            {
+                throw new ArgumentNullException(nameof(userid), "EmployeeId cannot be null");
+            }
+            var employee = await _db.Employees.Include(s => s.Salary).Include(s => s.Department).Include(s => s.Address).Include(r => r.User)
+           .FirstOrDefaultAsync(m => m.UserId == userid);
+            return employee;
+        }
+
         public async Task<EmployeeUserVm> AddEmployee(EmployeeUserVm employee)
         {
             if (employee == null)
@@ -97,8 +109,13 @@ namespace MVC_Project.Services.Repositories
                     ManagerId = employee.ManagerId,
                     // Link employee to user
                     UserId = user.Id,
-                    Designation = employee.Designation
-                };
+                    Designation = employee.Designation,
+                    //Extra Fields for Personal Details
+                    BloodGroup =employee.BloodGroup,
+                    TimeZone = employee.TimeZone,
+                    CompanyName =employee.CompanyName,
+                    ProfileImagePath=employee.ProfileImagePath
+    };
                 _db.Employees.Add(updatedemployee);
                 await _db.SaveChangesAsync();
 
@@ -140,6 +157,11 @@ namespace MVC_Project.Services.Repositories
                 employee.Designation = updatedEmployee.Designation;
                 employee.DepartmentId = updatedEmployee.DepartmentId;
                 employee.AddressId = updatedEmployee.AddressId;
+                //Extra Fields for Personal Details
+                employee.BloodGroup = employee.BloodGroup;
+                employee.TimeZone = employee.TimeZone;
+                employee.CompanyName = employee.CompanyName;
+                employee.ProfileImagePath = employee.ProfileImagePath;
 
 
                 // 3️⃣ Update USER fields (same logic as Create)
@@ -208,6 +230,18 @@ namespace MVC_Project.Services.Repositories
                 .AnyAsync(e => e.Email.ToLower() == Email.ToLower());
             return emailExists;
 
+        }
+
+        // New: Update profile image path using repository's DbContext
+        public async Task<bool> UpdateProfileImagePathByUserIdAsync(int userId, string imagePath)
+        {
+            var employee = await _db.Employees.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (employee == null)
+                return false;
+
+            employee.ProfileImagePath = imagePath;
+            await _db.SaveChangesAsync();
+            return true;
         }
 
 
