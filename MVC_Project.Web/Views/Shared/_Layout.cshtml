@@ -48,98 +48,33 @@
 
     <script>
         const themeSwitch = document.getElementById("themeSwitch");
-        const navbar = document.getElementById("mainNavbar");
-        const mainfooter = document.getElementById("mainFooter");
         const themeLabel = document.getElementById("themeLabel");
-        const navlinks = document.getElementsByClassName("nav-link");
-        const navbrandname = document.getElementById("navbar-brand");
-        const footerHeader = document.getElementById("footerHeader");
-        const footerSocialLinks = document.getElementsByClassName("footer-Social-Links");
-        const quickfooterlinks = document.getElementsByClassName("quick-Links-Footer");
-        const pagetextstyle = document.getElementById("page-text-style");
-        const themeSwitchDeptText = document.getElementById("deptText");
 
-        function setTheme(isDark) {
-            document.body.classList.toggle("custom-dark-body-style", isDark);
-            document.body.classList.toggle("text-white", isDark);
-
-            if (navbar) {
-                navbar.classList.toggle("custom-navbar-dark", isDark);
-                navbar.classList.toggle("custom-navbar-light", !isDark);
+        function setTheme(isLightMode) {
+            if (isLightMode) {
+                document.body.classList.add("light-mode");
+            } else {
+                document.body.classList.remove("light-mode");
             }
 
-            if (navbrandname) {
-                navbrandname.classList.toggle("custom-navbar-brand-dark", isDark);
-                navbrandname.classList.toggle("custom-navbar-brand-light", !isDark);
-            }
-
-            if (mainfooter) {
-                mainfooter.classList.toggle("custom-mainfooter-dark", isDark);
-                mainfooter.classList.toggle("custom-mainfooter-light", !isDark);
-            }
-
-            if (footerHeader) {
-                footerHeader.classList.toggle("footer-Header-dark", isDark);
-                footerHeader.classList.toggle("footer-Header-light", !isDark);
-            }
-
-            if (pagetextstyle) {
-                pagetextstyle.classList.toggle("custom-page-text-style-dark", isDark);
-                pagetextstyle.classList.toggle("custom-page-text-style-light", !isDark);
-            }
-             if (themeSwitchDeptText) {
-                themeSwitchDeptText.classList.toggle("custom-department-body-dark", isDark);
-                themeSwitchDeptText.classList.toggle("custom-department-body-light", !isDark);
-            }
-             
             if (themeLabel) {
-                themeLabel.textContent = isDark ? "Dark Mode" : "Light Mode";
-            }
-
-            if (navlinks.length > 0) {
-                for (let link of navlinks) {
-                    link.classList.toggle("custom-navlink-dark", isDark);
-                    link.classList.toggle("custom-navlink-light", !isDark);
-                }
-            }
-
-            if (footerSocialLinks.length > 0) {
-                for (let flink of footerSocialLinks) {
-                    flink.classList.toggle("custom-footer-social-links-dark", isDark);
-                    flink.classList.toggle("custom-footer-social-links-light", !isDark);
-                }
-            }
-
-            if (quickfooterlinks.length > 0) {
-                for (let qflink of quickfooterlinks) {
-                    qflink.classList.toggle("custom-footer-link-dark", isDark);
-                    qflink.classList.toggle("custom-footer-link-light", !isDark);
-                }
-            }
-
-            const pageSizeButtons = document.querySelectorAll(".page-size-button");
-            if (pageSizeButtons.length > 0) {
-                pageSizeButtons.forEach(button => {
-                    button.classList.toggle("custom-page-dark", isDark);
-                    button.classList.toggle("custom-page-light", !isDark);
-                });
+                themeLabel.textContent = isLightMode ? "Light Mode" : "Dark Mode";
             }
         }
 
-        // ✅ Apply theme on every page load
         window.addEventListener("DOMContentLoaded", () => {
-            const savedMode = localStorage.getItem("isDarkMode") === "true";
-            themeSwitch && (themeSwitch.checked = savedMode);
+            const savedMode = localStorage.getItem("lightMode") === "true";
+            if (themeSwitch) {
+                themeSwitch.checked = savedMode;
+            }
             setTheme(savedMode);
         });
 
-        // ✅ Allow changing mode
         themeSwitch?.addEventListener("change", () => {
-            const isDark = themeSwitch.checked;
-            localStorage.setItem("isDarkMode", isDark);
-            setTheme(isDark);
+            const isLight = themeSwitch.checked;
+            localStorage.setItem("lightMode", isLight);
+            setTheme(isLight);
         });
-
     </script>
 
 
