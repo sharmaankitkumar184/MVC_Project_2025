@@ -251,12 +251,22 @@ namespace MVC_Project.Services.Migrations
                     b.Property<decimal>("Bonus")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAtt")
+                     .ValueGeneratedOnAddOrUpdate()
+                     .HasColumnType("datetime2");
                     b.Property<decimal>("Deductions")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("EmployeeCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -322,10 +332,10 @@ namespace MVC_Project.Services.Migrations
                         {
                             Id = 555,
                             AddressId = 1,
-                            DateOfRegister = new DateTime(2026, 2, 27, 20, 57, 29, 555, DateTimeKind.Local).AddTicks(4168),
+                            DateOfRegister = new DateTime(2026, 4, 17, 16, 2, 21, 272, DateTimeKind.Local).AddTicks(1335),
                             Email = "admin@orgmaster.com",
                             FullName = "OrgMaster",
-                            PasswordHash = "$2a$11$jqM9DXhy7ccs5xcmd8KN7Onngs5sud6DrWSaNxbXKbv4McGDR2g.G",
+                            PasswordHash = "$2a$11$sAU3lC7CgYeDdn2k8P7yA.0JOu2li5ghrA5alJMntcTTcs3.tbdci",
                             PasswordResetToken = "",
                             PhoneNumber = "9097920260",
                             Role = 1,
