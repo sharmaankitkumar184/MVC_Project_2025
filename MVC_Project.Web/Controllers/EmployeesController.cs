@@ -104,6 +104,7 @@ namespace MVC_Project.Web.Controllers
             ModelState.Remove("Salary");
             ModelState.Remove("EmployeeCode");
             ModelState.Remove("address");
+            ModelState.Remove("ProfileImagePath");
 
             if (!ModelState.IsValid)
             {
@@ -178,6 +179,8 @@ namespace MVC_Project.Web.Controllers
             // Remove Salary from the model state validation if needed
             ModelState.Remove("Salary");
             ModelState.Remove("address");
+            ModelState.Remove("ProfileImagePath");
+            ModelState.Remove("EmployeeCode");
             if (ModelState.IsValid)
             { 
                 ViewBag.Departments = new SelectList(_deptrepo.GetAllDepartment().Result, "Id", "Name");

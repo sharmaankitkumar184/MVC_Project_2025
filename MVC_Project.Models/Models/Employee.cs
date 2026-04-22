@@ -69,11 +69,15 @@ namespace MVC_Project.Models.Models
         public string? BloodGroup { get; set; }
         public string? TimeZone { get; set; }
         public string? CompanyName { get; set; }
-        public string ProfileImagePath { get; set; }
+        public string? ProfileImagePath { get; set; }
 
-        public int Points { get; set; } = 0;
-        public int Colleagues { get; set; } = 0;
-        public int Activities { get; set; } = 0;
+        public int? Points { get; set; } = 0;
+        public int? Colleagues { get; set; } = 0;
+        public int? Activities { get; set; } = 0;
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     }
   

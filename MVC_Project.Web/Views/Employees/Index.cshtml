@@ -98,7 +98,7 @@ else
                                     <i class="bi bi-wallet2" style="color: #667eea;"></i> Salary
                                 </span>
                                 <span class="info-badge badge-salary">
-                                    @(item.Salary.BaseSalary + item.Salary.Bonus - item.Salary.Deductions).ToString("C")
+                                    @((item.Salary.BaseSalary + item.Salary.Bonus - item.Salary.Deductions).ToString("C"))
                                 </span>
                             </div>
                         }

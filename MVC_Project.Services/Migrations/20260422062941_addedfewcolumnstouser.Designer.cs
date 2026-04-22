@@ -4,6 +4,7 @@ using MVC_Project.Services.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC_Project.Services.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260422062941_addedfewcolumnstouser")]
+    partial class addedfewcolumnstouser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,6 +39,7 @@ namespace MVC_Project.Services.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("State")
@@ -116,6 +120,7 @@ namespace MVC_Project.Services.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -241,9 +246,6 @@ namespace MVC_Project.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
@@ -266,6 +268,7 @@ namespace MVC_Project.Services.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Deductions")
@@ -327,6 +330,7 @@ namespace MVC_Project.Services.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
@@ -345,14 +349,14 @@ namespace MVC_Project.Services.Migrations
                         {
                             Id = 555,
                             AddressId = 1,
-                            DateOfRegister = new DateTime(2026, 4, 22, 12, 11, 53, 953, DateTimeKind.Local).AddTicks(3656),
+                            DateOfRegister = new DateTime(2026, 4, 22, 11, 59, 40, 208, DateTimeKind.Local).AddTicks(5681),
                             Email = "admin@orgmaster.com",
                             FullName = "OrgMaster",
-                            PasswordHash = "$2a$11$mQ7Zzx7vYk7jtDEQqGEz/ukRdyMejaS9Ig2tudR.jMx9tN.mWY3Lq",
+                            PasswordHash = "$2a$11$kNd2Nhk121.s8Lh0drs1w.LG2RMQbiABn4jNavz4k976WXqWh7v8a",
                             PasswordResetToken = "",
                             PhoneNumber = "9097920260",
                             Role = 1,
-                            UpdatedAt = new DateTime(2026, 4, 22, 6, 41, 53, 735, DateTimeKind.Utc).AddTicks(8840),
+                            UpdatedAt = new DateTime(2026, 4, 22, 6, 29, 40, 13, DateTimeKind.Utc).AddTicks(2205),
                             Username = "OM3355"
                         });
                 });

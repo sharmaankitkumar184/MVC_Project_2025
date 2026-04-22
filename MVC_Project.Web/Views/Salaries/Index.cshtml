@@ -43,7 +43,18 @@ else
                 </div>
                 <div class="stat-content">
                     <span class="stat-label">Total Base Salary</span>
-                    <span class="stat-value">@totalBaseSalary.ToString("C")</span>
+                    <span class="stat-value">
+                        @{
+                            string formattedBaseSalary;
+                            if (totalBaseSalary >= 1000000)
+                                formattedBaseSalary = "$" + (totalBaseSalary / 1000000).ToString("F1") + "M";
+                            else if (totalBaseSalary >= 1000)
+                                formattedBaseSalary = "$" + (totalBaseSalary / 1000).ToString("F0") + "K";
+                            else
+                                formattedBaseSalary = totalBaseSalary.ToString("C0");
+                        }
+                        @formattedBaseSalary
+                    </span>
                 </div>
             </div>
         </div>
@@ -55,7 +66,18 @@ else
                 </div>
                 <div class="stat-content">
                     <span class="stat-label">Total Bonus</span>
-                    <span class="stat-value">@totalBonus.ToString("C")</span>
+                    <span class="stat-value">
+                        @{
+                            string formattedBonus;
+                            if (totalBonus >= 1000000)
+                                formattedBonus = "$" + (totalBonus / 1000000).ToString("F1") + "M";
+                            else if (totalBonus >= 1000)
+                                formattedBonus = "$" + (totalBonus / 1000).ToString("F0") + "K";
+                            else
+                                formattedBonus = totalBonus.ToString("C0");
+                        }
+                        @formattedBonus
+                    </span>
                 </div>
             </div>
         </div>
@@ -67,7 +89,18 @@ else
                 </div>
                 <div class="stat-content">
                     <span class="stat-label">Total Deductions</span>
-                    <span class="stat-value">@totalDeductions.ToString("C")</span>
+                    <span class="stat-value">
+                        @{
+                            string formattedDeductions;
+                            if (totalDeductions >= 1000000)
+                                formattedDeductions = "$" + (totalDeductions / 1000000).ToString("F1") + "M";
+                            else if (totalDeductions >= 1000)
+                                formattedDeductions = "$" + (totalDeductions / 1000).ToString("F0") + "K";
+                            else
+                                formattedDeductions = totalDeductions.ToString("C0");
+                        }
+                        @formattedDeductions
+                    </span>
                 </div>
             </div>
         </div>
@@ -79,7 +112,18 @@ else
                 </div>
                 <div class="stat-content">
                     <span class="stat-label">Total Net Salary</span>
-                    <span class="stat-value">@totalNetSalary.ToString("C")</span>
+                    <span class="stat-value">
+                        @{
+                            string formattedNetSalary;
+                            if (totalNetSalary >= 1000000)
+                                formattedNetSalary = "$" + (totalNetSalary / 1000000).ToString("F1") + "M";
+                            else if (totalNetSalary >= 1000)
+                                formattedNetSalary = "$" + (totalNetSalary / 1000).ToString("F0") + "K";
+                            else
+                                formattedNetSalary = totalNetSalary.ToString("C0");
+                        }
+                        @formattedNetSalary
+                    </span>
                 </div>
             </div>
         </div>
@@ -118,16 +162,63 @@ else
                                 <span class="designation-badge">@s.Employee?.Designation</span>
                             </td>
                             <td>
-                                <span class="salary-badge salary-base">@s.BaseSalary.ToString("C")</span>
+                                <span class="salary-badge salary-base">
+                                    @{
+                                        string formattedBase;
+                                        if (s.BaseSalary >= 1000000)
+                                            formattedBase = "$" + (s.BaseSalary / 1000000).ToString("F1") + "M";
+                                        else if (s.BaseSalary >= 1000)
+                                            formattedBase = "$" + (s.BaseSalary / 1000).ToString("F0") + "K";
+                                        else
+                                            formattedBase = s.BaseSalary.ToString("C0");
+                                    }
+                                    @formattedBase
+                                </span>
                             </td>
                             <td>
-                                <span class="salary-badge salary-bonus">+@s.Bonus.ToString("C")</span>
+                                <span class="salary-badge salary-bonus">
+                                    +@{
+                                        string formattedRowBonus;
+                                        if (s.Bonus >= 1000000)
+                                            formattedRowBonus = "$" + (s.Bonus / 1000000).ToString("F1") + "M";
+                                        else if (s.Bonus >= 1000)
+                                            formattedRowBonus = "$" + (s.Bonus / 1000).ToString("F0") + "K";
+                                        else
+                                            formattedRowBonus = s.Bonus.ToString("C0");
+                                    }
+                                    @formattedRowBonus
+                                </span>
                             </td>
                             <td>
-                                <span class="salary-badge salary-deduction">-@s.Deductions.ToString("C")</span>
+                                <span class="salary-badge salary-deduction">
+                                    -@{
+                                        string formattedRowDeductions;
+                                        if (s.Deductions >= 1000000)
+                                            formattedRowDeductions = "$" + (s.Deductions / 1000000).ToString("F1") + "M";
+                                        else if (s.Deductions >= 1000)
+                                            formattedRowDeductions = "$" + (s.Deductions / 1000).ToString("F0") + "K";
+                                        else
+                                            formattedRowDeductions = s.Deductions.ToString("C0");
+                                    }
+                                    @formattedRowDeductions
+                                </span>
                             </td>
                             <td>
-                                <span class="salary-badge salary-net"><strong>@(s.BaseSalary + s.Bonus - s.Deductions).ToString("C")</strong></span>
+                                <span class="salary-badge salary-net">
+                                    <strong>
+                                        @{
+                                            var rowNet = s.BaseSalary + s.Bonus - s.Deductions;
+                                            string formattedRowNet;
+                                            if (rowNet >= 1000000)
+                                                formattedRowNet = "$" + (rowNet / 1000000).ToString("F1") + "M";
+                                            else if (rowNet >= 1000)
+                                                formattedRowNet = "$" + (rowNet / 1000).ToString("F0") + "K";
+                                            else
+                                                formattedRowNet = rowNet.ToString("C0");
+                                        }
+                                        @formattedRowNet
+                                    </strong>
+                                </span>
                             </td>
                             <td style="text-align: center;">
                                 <div class="salary-actions">

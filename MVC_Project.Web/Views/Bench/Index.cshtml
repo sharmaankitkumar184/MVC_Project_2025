@@ -1,0 +1,82 @@
+@model IQueryable<MVC_Project.Models.Models.Employee>
+
+@{
+    ViewData["Title"] = "Bench";
+    var list = Model?.ToList() ?? new List<MVC_Project.Models.Models.Employee>();
+    bool hasRecords = list.Any();
+}
+
+<div class="employee-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-person-dash me-3"></i>Bench</h1>
+            <p>Employees currently not assigned to an active department</p>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div id="successAlert" class="alert alert-success border-0 rounded-3">
+        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+    </div>
+}
+
+@if (!hasRecords)
+{
+    <div class="empty-state-minimal">
+        <i class="bi bi-people"></i>
+        <h4>Bench is Empty 🎉</h4>
+        <span>Everyone is allocated to projects.</span>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in list)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card employee-card">
+                    <span class="designation-badge">
+                        <i class="bi bi-briefcase me-1"></i>@item.Designation
+                    </span>
+
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <h6 class="card-subtitle">
+                            <i class="bi bi-hash"></i> @item.EmployeeCode
+                        </h6>
+
+                        <div class="employee-info-row">
+                            <span class="employee-info-label">
+                                <i class="bi bi-envelope" style="color: #667eea;"></i> Email
+                            </span>
+                            <span class="employee-info-value">@(string.IsNullOrEmpty(item.Email) ? "N/A" : item.Email)</span>
+                        </div>
+
+                        <div class="employee-info-row">
+                            <span class="employee-info-label">
+                                <i class="bi bi-building" style="color: #667eea;"></i> Dept
+                            </span>
+                            <span class="info-badge badge-department">
+                                @(item.Department != null ? item.Department.Name : "N/A")
+                            </span>
+                        </div>
+
+                        <div class="employee-actions">
+                            <a asp-action="Assign" asp-route-id="@item.Id" class="btn btn-action btn-edit" title="Assign to Department">
+                                <i class="bi bi-diagram-2"></i>
+                                <span>Assign</span>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-action btn-view" title="View Details">
+                                <i class="bi bi-eye"></i>
+                                <span>Details</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+

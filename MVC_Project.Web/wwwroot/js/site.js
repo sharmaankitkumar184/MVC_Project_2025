@@ -22,3 +22,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+    setTimeout(function () {
+        let alert = document.getElementById("successAlert");
+
+    if(alert){
+        alert.classList.add("fade");
+
+        setTimeout(()=>{
+        alert.remove();
+        },500);
+    }
+},5000);

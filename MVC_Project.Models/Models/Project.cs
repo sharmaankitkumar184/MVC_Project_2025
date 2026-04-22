@@ -43,6 +43,8 @@ namespace MVC_Project.Models.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public string? CreatedBy { get; set; }
+
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
     public enum Status
     {
