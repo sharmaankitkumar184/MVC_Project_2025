@@ -1,0 +1,53 @@
+@model MVC_Project.Models.ViewModel.BenchAssignVm
+
+@{
+    ViewData["Title"] = "Assign Bench Employee";
+    var deptList = ViewBag.DepartmentList as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>
+                   ?? new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+    var employeeName = ViewBag.EmployeeName as string ?? "Employee";
+}
+
+<div class="dept-details-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1><i class="bi bi-diagram-2 me-3"></i>Assign Employee</h1>
+            <p>Move <strong>@employeeName</strong> from Bench to a department</p>
+        </div>
+        <div class="action-buttons">
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left me-2"></i>Back
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        <form asp-action="Assign" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="EmployeeId" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="DepartmentId" class="form-label fw-semibold">Department</label>
+                <select asp-for="DepartmentId" class="form-select" asp-items="deptList">
+                    <option value="">-- Select department --</option>
+                </select>
+                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check2-circle me-2"></i>Assign
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

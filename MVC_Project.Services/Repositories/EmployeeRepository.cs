@@ -87,7 +87,9 @@ namespace MVC_Project.Services.Repositories
                     PhoneNumber = employee.Phone,
                     AddressId = employee.AddressId,
                     Role = UserRole.Employee,
-                    DateOfRegister = DateTime.Now
+                    DateOfRegister = DateTime.Now,
+                    UpdatedAt= DateTime.Now
+
                 };
 
                 _db.Users.Add(user);
@@ -113,9 +115,12 @@ namespace MVC_Project.Services.Repositories
                     //Extra Fields for Personal Details
                     BloodGroup =employee.BloodGroup,
                     TimeZone = employee.TimeZone,
-                    CompanyName =employee.CompanyName,
-                    ProfileImagePath=employee.ProfileImagePath
-    };
+                    CompanyName ="OrgMaster",
+                    ProfileImagePath = employee.ProfileImagePath ?? "/images/profile/default.png",
+                    UpdatedAt=DateTime.Now,
+                    CreatedAt=DateTime.Now
+
+                };
                 _db.Employees.Add(updatedemployee);
                 await _db.SaveChangesAsync();
 
@@ -162,6 +167,7 @@ namespace MVC_Project.Services.Repositories
                 employee.TimeZone = employee.TimeZone;
                 employee.CompanyName = employee.CompanyName;
                 employee.ProfileImagePath = employee.ProfileImagePath;
+                employee.UpdatedAt = DateTime.Now;
 
 
                 // 3️⃣ Update USER fields (same logic as Create)
@@ -171,6 +177,7 @@ namespace MVC_Project.Services.Repositories
                     employee.User.Email = updatedEmployee.Email ?? string.Empty;
                     employee.User.PhoneNumber = updatedEmployee.Phone ?? string.Empty;
                     employee.User.AddressId = updatedEmployee.AddressId;
+                    employee.User.UpdatedAt = DateTime.Now;
                     if (isAdmin)
                     {
                         employee.User.Role = updatedEmployee.Role;

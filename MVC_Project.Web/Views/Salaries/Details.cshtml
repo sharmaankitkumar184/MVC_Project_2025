@@ -1,58 +1,152 @@
 @model MVC_Project.Models.Models.Salaries
 @{
     ViewData["Title"] = "Salary Details";
+    var netSalary = Model.BaseSalary + Model.Bonus - Model.Deductions;
 }
 
-<div class="details-header">
-    <h1><i class="bi bi-wallet2 me-2"></i>Salary Details</h1>
-    <p class="mb-0 mt-2 opacity-75">@Model.Employee?.Name - Code: @Model.EmployeeCode</p>
-</div>
-
-<div class="card salary-detail-card">
-    <div class="detail-row">
-        <div class="detail-label"><i class="bi bi-person me-2"></i>Employee Name</div>
-        <div class="detail-value">@Model.Employee?.Name</div>
-    </div>
-
-    <div class="detail-row">
-        <div class="detail-label"><i class="bi bi-id-card me-2"></i>Employee Code</div>
-        <div class="detail-value">@Model.EmployeeCode</div>
-    </div>
-
-    <div class="detail-row">
-        <div class="detail-label"><i class="bi bi-cash me-2"></i>Base Salary</div>
-        <div class="detail-value">
-            <span class="salary-detail-badge badge-base">@Model.BaseSalary.ToString("C")</span>
+<div class="salary-details-hero">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div>
+            <div class="salary-details-eyebrow">
+                <a asp-action="Index" class="salary-details-backlink">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Salary List
+                </a>
+            </div>
+            <h1 class="salary-details-title">
+                <i class="bi bi-wallet2 me-2"></i>Salary Details
+            </h1>
+            <p class="salary-details-subtitle mb-0">
+                <strong>@Model.Employee?.Name</strong>
+                <span class="opacity-75">· Code: @Model.EmployeeCode</span>
+            </p>
         </div>
-    </div>
 
-    <div class="detail-row">
-        <div class="detail-label"><i class="bi bi-gift me-2"></i>Bonus</div>
-        <div class="detail-value">
-            <span class="salary-detail-badge badge-bonus">@Model.Bonus.ToString("C")</span>
-        </div>
-    </div>
-
-    <div class="detail-row">
-        <div class="detail-label"><i class="bi bi-dash-circle me-2"></i>Deductions</div>
-        <div class="detail-value">
-            <span class="salary-detail-badge badge-deduction">@Model.Deductions.ToString("C")</span>
-        </div>
-    </div>
-
-    <div class="detail-row" style="background-color: #f8f9fa;">
-        <div class="detail-label"><i class="bi bi-wallet2 me-2"></i>Net Salary</div>
-        <div class="detail-value">
-            <span class="salary-detail-badge badge-net">@(Model.BaseSalary + Model.Bonus - Model.Deductions).ToString("C")</span>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary salary-details-btn">
+                <i class="bi bi-pencil me-2"></i>Edit
+            </a>
+            <a asp-action="Index" class="btn btn-outline-light salary-details-btn salary-details-btn-secondary">
+                <i class="bi bi-list-ul me-2"></i>All Salaries
+            </a>
         </div>
     </div>
 </div>
 
-<div class="d-flex gap-2">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-        <i class="bi bi-pencil me-2"></i>Edit Salary
-    </a>
-    <a asp-action="Index" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left me-2"></i>Back to List
-    </a>
+<div class="salary-details-grid">
+    <div class="salary-details-card salary-details-employee">
+        <div class="salary-details-card-header">
+            <div class="salary-details-card-icon">
+                <i class="bi bi-person-badge"></i>
+            </div>
+            <div>
+                <div class="salary-details-card-title">Employee</div>
+                <div class="salary-details-card-subtitle">Profile snapshot</div>
+            </div>
+        </div>
+
+        <div class="salary-details-kv">
+            <div class="salary-details-k">
+                <i class="bi bi-person me-2"></i>Name
+            </div>
+            <div class="salary-details-v">@Model.Employee?.Name</div>
+        </div>
+        <div class="salary-details-kv">
+            <div class="salary-details-k">
+                <i class="bi bi-id-card me-2"></i>Employee Code
+            </div>
+            <div class="salary-details-v">@Model.EmployeeCode</div>
+        </div>
+        <div class="salary-details-kv">
+            <div class="salary-details-k">
+                <i class="bi bi-briefcase me-2"></i>Designation
+            </div>
+            <div class="salary-details-v">
+                <span class="designation-badge">@Model.Employee?.Designation</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="salary-details-card salary-details-comp">
+        <div class="salary-details-card-header">
+            <div class="salary-details-card-icon">
+                <i class="bi bi-cash-coin"></i>
+            </div>
+            <div>
+                <div class="salary-details-card-title">Compensation</div>
+                <div class="salary-details-card-subtitle">Breakdown</div>
+            </div>
+            <div class="salary-details-net">
+                <div class="salary-details-net-label">Net Salary</div>
+                <div class="salary-details-net-value">
+                    @{
+                        string formattedNet;
+                        if (netSalary >= 1000000)
+                            formattedNet = "$" + (netSalary / 1000000).ToString("F1") + "M";
+                        else if (netSalary >= 1000)
+                            formattedNet = "$" + (netSalary / 1000).ToString("F0") + "K";
+                        else
+                            formattedNet = netSalary.ToString("C0");
+                    }
+                    @formattedNet
+                </div>
+            </div>
+        </div>
+
+        <div class="salary-details-breakdown">
+            <div class="salary-details-line">
+                <div class="salary-details-line-left">
+                    <span class="salary-dot salary-dot-base"></span>
+                    Base Salary
+                </div>
+                <div class="salary-details-line-right">
+                    @{
+                        string formattedBase;
+                        if (Model.BaseSalary >= 1000000)
+                            formattedBase = "$" + (Model.BaseSalary / 1000000).ToString("F1") + "M";
+                        else if (Model.BaseSalary >= 1000)
+                            formattedBase = "$" + (Model.BaseSalary / 1000).ToString("F0") + "K";
+                        else
+                            formattedBase = Model.BaseSalary.ToString("C0");
+                    }
+                    @formattedBase
+                </div>
+            </div>
+            <div class="salary-details-line">
+                <div class="salary-details-line-left">
+                    <span class="salary-dot salary-dot-bonus"></span>
+                    Bonus
+                </div>
+                <div class="salary-details-line-right salary-positive">
+                    +@{
+                        string formattedBonus;
+                        if (Model.Bonus >= 1000000)
+                            formattedBonus = "$" + (Model.Bonus / 1000000).ToString("F1") + "M";
+                        else if (Model.Bonus >= 1000)
+                            formattedBonus = "$" + (Model.Bonus / 1000).ToString("F0") + "K";
+                        else
+                            formattedBonus = Model.Bonus.ToString("C0");
+                    }
+                    @formattedBonus
+                </div>
+            </div>
+            <div class="salary-details-line">
+                <div class="salary-details-line-left">
+                    <span class="salary-dot salary-dot-deduction"></span>
+                    Deductions
+                </div>
+                <div class="salary-details-line-right salary-negative">
+                    -@{
+                        string formattedDeductions;
+                        if (Model.Deductions >= 1000000)
+                            formattedDeductions = "$" + (Model.Deductions / 1000000).ToString("F1") + "M";
+                        else if (Model.Deductions >= 1000)
+                            formattedDeductions = "$" + (Model.Deductions / 1000).ToString("F0") + "K";
+                        else
+                            formattedDeductions = Model.Deductions.ToString("C0");
+                    }
+                    @formattedDeductions
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

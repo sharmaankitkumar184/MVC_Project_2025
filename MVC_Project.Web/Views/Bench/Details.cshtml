@@ -1,0 +1,68 @@
+@model MVC_Project.Models.Models.Employee
+
+@{
+    ViewData["Title"] = "Bench Employee Details";
+}
+
+<div class="dept-details-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1><i class="bi bi-person-badge me-3"></i>@Model.Name</h1>
+            <p>Bench employee profile</p>
+        </div>
+        <div class="action-buttons">
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left me-2"></i>Back to Bench
+            </a>
+            <a asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-primary btn-lg">
+                <i class="bi bi-diagram-2 me-2"></i>Assign to Department
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-hash me-2"></i>Employee Code</span>
+                    <span class="metadata-value">@Model.EmployeeCode</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-briefcase me-2"></i>Designation</span>
+                    <span class="metadata-value">@Model.Designation</span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-envelope me-2"></i>Email</span>
+                    <span class="metadata-value">@Model.Email</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-telephone me-2"></i>Phone</span>
+                    <span class="metadata-value">@Model.Phone</span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-building me-2"></i>Department</span>
+                    <span class="metadata-value">@Model.Department?.Name</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-calendar-event me-2"></i>Date of Birth</span>
+                    <span class="metadata-value">@Model.DateOfBirth.ToString("dd MMM yyyy")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

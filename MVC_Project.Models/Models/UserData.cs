@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MVC_Project.Models.Models
 {
@@ -37,6 +38,8 @@ namespace MVC_Project.Models.Models
 
         // navigation
         public Employee Employee { get; set; } = null!;
+
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     }
     public enum LoginResult

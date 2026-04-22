@@ -38,7 +38,6 @@ namespace MVC_Project.Models.Models
         [ForeignKey("EmployeeCode")]
         public Employee? Employee { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

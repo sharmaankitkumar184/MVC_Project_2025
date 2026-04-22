@@ -62,7 +62,7 @@ namespace MVC_Project.Web.Controllers
                 BloodGroup=employeeDetails.BloodGroup,
                 TimeZone=employeeDetails.TimeZone,
                 CompanyName=employeeDetails.CompanyName,
-                Activities=employeeDetails.Activities,
+                //Activities=employeeDetails?Activities,
 
 
             };
