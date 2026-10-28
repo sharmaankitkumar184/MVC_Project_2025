@@ -23,6 +23,10 @@ namespace MVC_Project.Services.Data
 
         public DbSet<UserData> Users { get; set; }
 
+        public DbSet<Attendance> Attendances { get; set; }
+
+        public DbSet<PunchSession> PunchSessions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //// Define Composite Key: EmployeeCode and Id
@@ -98,6 +102,30 @@ namespace MVC_Project.Services.Data
                  .HasForeignKey<Salaries>(s => s.EmployeeCode)  // Using EmployeeCode as FK
                  .HasPrincipalKey<Employee>(e => e.EmployeeCode) // Ensure EmployeeCode is used as principal key
                  .OnDelete(DeleteBehavior.Cascade); // Specify delete behavior (optional)
+
+            // Employee-Attendance Relationship (One-to-Many)
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Employee)
+                .WithMany()
+                .HasForeignKey(a => a.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Create index on EmployeeId and AttendanceDate for performance
+            modelBuilder.Entity<Attendance>()
+                .HasIndex(a => new { a.EmployeeId, a.AttendanceDate })
+                .IsUnique();
+
+            // Attendance-PunchSession Relationship (One-to-Many)
+            modelBuilder.Entity<PunchSession>()
+                .HasOne(p => p.Attendance)
+                .WithMany(a => a.PunchSessions)
+                .HasForeignKey(p => p.AttendanceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Create index on AttendanceId and SessionNumber
+            modelBuilder.Entity<PunchSession>()
+                .HasIndex(p => new { p.AttendanceId, p.SessionNumber })
+                .IsUnique();
 
             modelBuilder.Entity<Project>(entity =>
             {

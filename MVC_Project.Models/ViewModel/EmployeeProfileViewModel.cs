@@ -36,5 +36,15 @@ namespace MVC_Project.Models.ViewModel
 
         // Stats (for UI)
         public int Activities { get; set; }
+
+        // Additional fields for enhanced profile
+        public string? JoiningDate { get; set; }
+        public int ExperienceYears { get; set; }
+        public string? EmploymentStatus { get; set; }
+        public string? SkillsSummary { get; set; }
+        public string? TeamMembersCount { get; set; }
+        public string? ReportingManager { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public bool IsProfileComplete { get; set; }
     }
 }

@@ -1,0 +1,1032 @@
+@using MVC_Project.Models.ViewModel
+@using MVC_Project.Models.Enums
+@model AttendanceCalendarViewModel
+
+@{
+    ViewData["Title"] = "Attendance Details";
+    var daysOfWeek = new[] { "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT" };
+    var firstDayOfMonth = new DateTime(Model.Year, Model.Month, 1);
+    var lastDayOfMonth = new DateTime(Model.Year, Model.Month, DateTime.DaysInMonth(Model.Year, Model.Month));
+    var firstDayIndex = (int)firstDayOfMonth.DayOfWeek;
+    var totalCells = firstDayIndex + lastDayOfMonth.Day;
+    var rows = (int)Math.Ceiling((double)totalCells / 7);
+}
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
+        --light: #f9fafb;
+        --border: #e5e7eb;
+        --weekend: #ffe0e0;
+    }
+
+    * { box-sizing: border-box; }
+    body { background: #f5f5f5; }
+
+    .attendance-container {
+        padding: 2rem 1rem;
+        background: #f5f5f5;
+        min-height: 100vh;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .attendance-header {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .attendance-header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .login-info {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        margin-top: 0.5rem;
+    }
+
+    .info-alert {
+        background: rgba(255, 255, 255, 0.15);
+        border-left: 4px solid white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .tabs-nav {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--border);
+        background: white;
+        padding: 0;
+        border-radius: 0.5rem 0.5rem 0 0;
+        overflow-x: auto;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .tabs-nav .nav-item { list-style: none; margin: 0; }
+
+    .tabs-nav .nav-link {
+        display: block;
+        padding: 1rem 1.5rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: #6b7280;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        white-space: nowrap;
+    }
+
+    .tabs-nav .nav-link:hover {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    .tabs-nav .nav-link.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    .tab-content {
+        background: white;
+        border-radius: 0 0 0.5rem 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .tab-pane {
+        display: none;
+        padding: 2rem;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .tab-pane.active { display: block; }
+
+    @@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-punch-in {
+        background: var(--success);
+        color: white;
+    }
+
+    .btn-punch-in:hover:not(:disabled) {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-punch-in:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-punch-out {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-punch-out:hover:not(:disabled) {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-punch-out:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-leave {
+        background: #8b5cf6;
+        color: white;
+    }
+
+    .btn-leave:hover {
+        background: #7c3aed;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border-top: 4px solid;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border);
+    }
+
+    .stat-card.present { border-top-color: var(--success); }
+    .stat-card.absent { border-top-color: var(--danger); }
+    .stat-card.leave { border-top-color: var(--warning); }
+    .stat-card.hours { border-top-color: var(--info); }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .stat-card.present .stat-value { color: var(--success); }
+    .stat-card.absent .stat-value { color: var(--danger); }
+    .stat-card.leave .stat-value { color: var(--warning); }
+    .stat-card.hours .stat-value { color: var(--info); }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .calendar-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: #1f2937;
+    }
+
+    .calendar-nav {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .nav-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        color: var(--primary);
+        font-size: 1.2rem;
+    }
+
+    .nav-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .calendar {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .calendar-weekdays {
+        background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .calendar-weekdays th {
+        padding: 1rem;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+    }
+
+    .calendar td {
+        border: 1px solid var(--border);
+        height: 140px;
+        vertical-align: top;
+        padding: 0.75rem;
+        background: white;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .calendar td:hover:not(.empty) {
+        background: var(--light);
+        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+        border-color: var(--primary);
+    }
+
+    .calendar td.empty {
+        background: #fafafa;
+        cursor: default;
+    }
+
+    .calendar td.weekend {
+        background: var(--weekend);
+    }
+
+    .calendar td.holiday {
+        background: #fff3cd;
+    }
+
+    .day-number {
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .attendance-badge {
+        display: block;
+        padding: 0.4rem 0.6rem;
+        border-radius: 0.4rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 0.3rem;
+        word-break: break-word;
+        line-height: 1.3;
+        text-align: center;
+    }
+
+    .badge-present { background: var(--success); }
+    .badge-absent { background: var(--danger); }
+    .badge-leave { background: var(--warning); }
+    .badge-halfday { background: var(--info); }
+    .badge-weeklyoff { background: var(--danger); }
+    .badge-holiday { background: #ffc107; color: #000; }
+
+    .punch-time {
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 500;
+        margin-top: 0.2rem;
+        font-family: 'Courier New', monospace;
+    }
+
+    .working-hours {
+        font-size: 0.7rem;
+        color: var(--success);
+        font-weight: 600;
+        margin-top: 0.2rem;
+    }
+
+    .sessions-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .sessions-table thead {
+        background: var(--light);
+        border-bottom: 2px solid var(--border);
+    }
+
+    .sessions-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #6b7280;
+        border: 1px solid var(--border);
+    }
+
+    .sessions-table td {
+        padding: 1rem;
+        border: 1px solid var(--border);
+    }
+
+    .sessions-table tbody tr:hover {
+        background: var(--light);
+    }
+
+    .session-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.3rem 0.75rem;
+        border-radius: 0.4rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-completed {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .legend {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        margin-top: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border);
+    }
+
+    .legend-title {
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1f2937;
+        font-size: 1.1rem;
+    }
+
+    .legend-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legend-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 0.3rem;
+        flex-shrink: 0;
+        border: 1px solid var(--border);
+    }
+
+    .monthly-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .monthly-table thead {
+        background: linear-gradient(135deg, var(--primary) 0%, #667eea 100%);
+        color: white;
+    }
+
+    .monthly-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .monthly-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .monthly-table tbody tr:hover {
+        background: var(--light);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #9ca3af;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        padding: 2rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6b7280;
+    }
+
+    .modal-body { padding: 2rem; }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+
+    .form-group textarea { resize: vertical; min-height: 100px; }
+
+    .btn-submit {
+        background: var(--primary);
+        color: white;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover { background: #4338ca; }
+
+    @@media (max-width: 768px) {
+        .attendance-container { padding: 1rem; }
+        .tabs-nav .nav-link { padding: 0.75rem 1rem; font-size: 0.9rem; }
+        .action-buttons { flex-direction: column; }
+        .btn-action { width: 100%; justify-content: center; }
+        .stats-grid { grid-template-columns: 1fr 1fr; }
+        .calendar td { height: 120px; padding: 0.5rem; font-size: 0.85rem; }
+        .calendar-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+        .legend-items { grid-template-columns: 1fr 1fr; }
+        .monthly-table th, .monthly-table td { padding: 0.75rem; font-size: 0.9rem; }
+    }
+</style>
+
+<div class="attendance-container">
+    <!-- Header -->
+    <div class="attendance-header">
+        <h1>Attendance Details</h1>
+        <div class="login-info" id="loginInfo">
+            Logged in since: <strong id="loginTime">--:--</strong> • Elapsed: <strong id="elapsedTime">00:00</strong>
+        </div>
+        <div class="info-alert">
+            ✓ You have <strong>@Model.PresentDays days</strong> present this month
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="btn-action btn-punch-in" id="punchInBtn" onclick="punchIn()">
+            📍 Punch In
+        </button>
+        <button class="btn-action btn-punch-out" id="punchOutBtn" onclick="punchOut()" disabled>
+            🚪 Punch Out
+        </button>
+        <button class="btn-action btn-leave" onclick="openApplyLeaveModal()">
+            📋 Apply Leave
+        </button>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <ul class="tabs-nav" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="attendance-tab" type="button" role="tab" onclick="switchTab(event, 'attendanceView')">
+                📅 Calendar View
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="details-tab" type="button" role="tab" onclick="switchTab(event, 'detailsView')">
+                📊 Monthly Details
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- TAB 1: Calendar View -->
+        <div class="tab-pane active" id="attendanceView">
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card present">
+                    <div class="stat-label">Present Days</div>
+                    <div class="stat-value">@Model.PresentDays</div>
+                </div>
+                <div class="stat-card absent">
+                    <div class="stat-label">Absent Days</div>
+                    <div class="stat-value">@Model.AbsentDays</div>
+                </div>
+                <div class="stat-card leave">
+                    <div class="stat-label">Leave Days</div>
+                    <div class="stat-value">@Model.LeaveDays</div>
+                </div>
+                <div class="stat-card hours">
+                    <div class="stat-label">Avg Working Hours</div>
+                    <div class="stat-value">@Model.AverageWorkingHours.ToString("F1")h</div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-title">Legend</div>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: var(--success);"></div>
+                        <span>Present</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: var(--danger);"></div>
+                        <span>Absent</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: var(--warning);"></div>
+                        <span>Leave</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: var(--info);"></div>
+                        <span>Half Day</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: var(--weekend);"></div>
+                        <span>Weekend</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: #fff3cd;"></div>
+                        <span>Holiday</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Header -->
+            <div class="calendar-header" style="margin-top: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="calendar-nav">
+                        <button class="nav-btn" onclick="previousMonth()" title="Previous Month">‹</button>
+                        <button class="nav-btn" onclick="nextMonth()" title="Next Month">›</button>
+                    </div>
+                    <h2>@Model.MonthName</h2>
+                </div>
+            </div>
+
+            <!-- Calendar -->
+            <table class="calendar">
+                <thead class="calendar-weekdays">
+                    <tr>
+                        @foreach (var day in daysOfWeek)
+                        {
+                            <th>@day</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int dayCounter = 1;
+                        for (int i = 0; i < rows; i++)
+                        {
+                            <tr>
+                                @for (int j = 0; j < 7; j++)
+                                {
+                                    if (i == 0 && j < firstDayIndex)
+                                    {
+                                        <td class="empty"></td>
+                                    }
+                                    else if (dayCounter <= lastDayOfMonth.Day)
+                                    {
+                                        var attendanceDate = new DateTime(Model.Year, Model.Month, dayCounter);
+                                        var attendance = Model.AttendancesByDate.ContainsKey(dayCounter)
+                                            ? Model.AttendancesByDate[dayCounter]
+                                            : null;
+
+                                        var cellClass = "calendar-cell";
+                                        var isWeekend = attendanceDate.DayOfWeek == DayOfWeek.Saturday || attendanceDate.DayOfWeek == DayOfWeek.Sunday;
+                                        var badgeClass = attendance?.Status switch
+                                        {
+                                            AttendanceStatus.Present => "badge-present",
+                                            AttendanceStatus.Absent => "badge-absent",
+                                            AttendanceStatus.Leave => "badge-leave",
+                                            AttendanceStatus.OnAnnualLeave => "badge-leave",
+                                            AttendanceStatus.OnCasual => "badge-leave",
+                                            AttendanceStatus.OnSickLeave => "badge-leave",
+                                            AttendanceStatus.HalfDay => "badge-halfday",
+                                            AttendanceStatus.WeeklyOff => "badge-weeklyoff",
+                                            _ => ""
+                                        };
+
+                                        <td @(isWeekend ? "class='weekend'" : "") @(attendance != null ? $"onclick=\"viewDayDetails('{attendanceDate:yyyy-MM-dd}')\"" : "")>
+                                            <div class="day-number">@dayCounter</div>
+                                            @if (attendance != null && attendance.Status == AttendanceStatus.Present)
+                                            {
+                                                <div class="attendance-badge @badgeClass">@attendance.StatusDisplayName</div>
+                                                @if (attendance.PunchSessions.Count > 0)
+                                                {
+                                                    var firstPunch = attendance.PunchSessions.First();
+                                                    <div class="punch-time">@firstPunch.PunchInTime.ToString("HH:mm")</div>
+                                                    var totalHours = attendance.WorkingHours;
+                                                    <div class="working-hours">@((int)totalHours.TotalHours)h @totalHours.Minutes m</div>
+                                                }
+                                            }
+                                            else if (attendance != null)
+                                            {
+                                                <div class="attendance-badge @badgeClass">@attendance.StatusDisplayName</div>
+                                            }
+                                        </td>
+                                        dayCounter++;
+                                    }
+                                    else
+                                    {
+                                        <td class="empty"></td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TAB 2: Monthly Details -->
+        <div class="tab-pane" id="detailsView">
+            <h3 style="margin-bottom: 1.5rem; color: #1f2937;">Monthly Attendance Summary</h3>
+
+            <!-- Monthly Statistics -->
+            <div class="stats-grid" id="monthlyStatsContainer">
+                <p style="text-align: center; color: #6b7280; grid-column: 1/-1;">Loading monthly data...</p>
+            </div>
+
+            <!-- Monthly Table -->
+            <div id="monthlyTableContainer" style="margin-top: 2rem;">
+                <table class="monthly-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Status</th>
+                            <th>Sessions</th>
+                            <th>Total Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthlyTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Loading attendance records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leave Application Modal -->
+<div class="modal-overlay" id="leaveModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 style="margin: 0;">Apply Leave</h3>
+            <button class="modal-close" onclick="closeLeaveModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="leaveForm" onsubmit="submitLeave(event)">
+                <div class="form-group">
+                    <label for="leaveDate">Leave Date *</label>
+                    <input type="date" id="leaveDate" required />
+                </div>
+                <div class="form-group">
+                    <label for="leaveType">Leave Type *</label>
+                    <select id="leaveType" required>
+                        <option value="">-- Select Leave Type --</option>
+                        <option value="0">Annual</option>
+                        <option value="1">Casual</option>
+                        <option value="2">Sick</option>
+                        <option value="6">Half Day</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="leaveReason">Reason</label>
+                    <textarea id="leaveReason" placeholder="Provide reason for leave..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Submit Leave Request</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let loginTime = new Date();
+
+    // Update elapsed time every second
+    setInterval(function() {
+        const now = new Date();
+        const elapsed = new Date(now - loginTime);
+        const hours = String(elapsed.getUTCHours()).padStart(2, '0');
+        const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+
+        document.getElementById('loginTime').textContent = loginTime.toLocaleTimeString('en-US', { hour12: false });
+        document.getElementById('elapsedTime').textContent = `${hours}:${minutes}:${seconds}`;
+    }, 1000);
+
+    // Tab switching
+    function switchTab(event, tabId) {
+        event.preventDefault();
+
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.remove('active');
+        });
+
+        document.querySelectorAll('.tabs-nav .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+
+        if (tabId === 'detailsView') {
+            loadMonthlyData();
+        }
+    }
+
+    // Load monthly data
+    function loadMonthlyData() {
+        const year = new URLSearchParams(window.location.search).get('year') || new Date().getFullYear();
+        const month = new URLSearchParams(window.location.search).get('month') || new Date().getMonth() + 1;
+
+        fetch(`@Url.Action("GetMonthlyData", "Attendance")?year=${year}&month=${month}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // Update statistics
+                    const statsHtml = `
+                        <div class="stat-card present">
+                            <div class="stat-label">Present Days</div>
+                            <div class="stat-value">${data.statistics.presentDays}</div>
+                        </div>
+                        <div class="stat-card absent">
+                            <div class="stat-label">Absent Days</div>
+                            <div class="stat-value">${data.statistics.absentDays}</div>
+                        </div>
+                        <div class="stat-card leave">
+                            <div class="stat-label">Leave Days</div>
+                            <div class="stat-value">${data.statistics.leaveDays}</div>
+                        </div>
+                        <div class="stat-card hours">
+                            <div class="stat-label">Total Working Hours</div>
+                            <div class="stat-value">${data.statistics.totalWorkingHours}</div>
+                        </div>
+                        <div class="stat-card" style="border-top-color: #f59e0b;">
+                            <div class="stat-label">Weekend Days</div>
+                            <div class="stat-value" style="color: #f59e0b;">${data.statistics.weekendDays}</div>
+                        </div>
+                        <div class="stat-card" style="border-top-color: #ffc107;">
+                            <div class="stat-label">Holiday Days</div>
+                            <div class="stat-value" style="color: #ffc107;">${data.statistics.holidayDays}</div>
+                        </div>
+                    `;
+                    document.getElementById('monthlyStatsContainer').innerHTML = statsHtml;
+
+                    // Update table
+                    let tableHtml = '';
+                    if (data.attendances.length === 0) {
+                        tableHtml = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No attendance records found</td></tr>';
+                    } else {
+                        data.attendances.forEach(att => {
+                            const statusColor = att.status === 'Present' ? 'green' : att.status === 'Absent' ? 'red' : 'orange';
+                            const sessionsHtml = att.sessions.map((s, i) => `<div style="font-size: 0.85rem;">#${s.sessionNumber}: ${s.punchInTime} - ${s.punchOutTime} (${s.duration})</div>`).join('');
+
+                            tableHtml += `
+                                <tr>
+                                    <td>${att.date}</td>
+                                    <td>${att.dayName}</td>
+                                    <td><span class="session-status" style="background: ${statusColor}20; color: ${statusColor};">${att.statusDisplay}</span></td>
+                                    <td>${att.totalSessions}</td>
+                                    <td>${att.totalHours}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                    document.getElementById('monthlyTableBody').innerHTML = tableHtml;
+                }
+            })
+            .catch(e => console.error('Error loading monthly data:', e));
+    }
+
+    // Punch In
+    function punchIn() {
+        fetch('@Url.Action("PunchIn", "Attendance")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`✓ Punched In at ${data.data.punchInTime}`);
+                    loadTodayStatus();
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+    }
+
+    // Punch Out
+    function punchOut() {
+        fetch('@Url.Action("PunchOut", "Attendance")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`✓ Punched Out at ${data.data.punchOutTime}\nSession Duration: ${data.data.sessionDuration}`);
+                    loadTodayStatus();
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+    }
+
+    // Load today's status
+    function loadTodayStatus() {
+        fetch('@Url.Action("TodayStatus", "Attendance")')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('punchInBtn').disabled = data.hasActivePunch;
+                    document.getElementById('punchOutBtn').disabled = !data.hasActivePunch;
+                }
+            });
+    }
+
+    // View day details
+    function viewDayDetails(date) {
+        fetch(`@Url.Action("GetDayStatusSummary", "Attendance")?date=${date}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Date: ${date}\nStatus: ${data.statusDisplay}\nPunch In: ${data.punchInTime || '—'}\nTotal Hours: ${data.totalHours}\nSessions: ${data.totalSessions}`);
+                }
+            });
+    }
+
+    // Month navigation
+    function previousMonth() {
+        const date = new Date(@Model.Year, @Model.Month - 2);
+        window.location = `?year=${date.getFullYear()}&month=${date.getMonth() + 1}`;
+    }
+
+    function nextMonth() {
+        const date = new Date(@Model.Year, @Model.Month);
+        window.location = `?year=${date.getFullYear()}&month=${date.getMonth() + 1}`;
+    }
+
+    // Leave Modal
+    function openApplyLeaveModal() {
+        document.getElementById('leaveModal').classList.add('show');
+    }
+
+    function closeLeaveModal() {
+        document.getElementById('leaveModal').classList.remove('show');
+    }
+
+    function submitLeave(event) {
+        event.preventDefault();
+        const leaveDate = document.getElementById('leaveDate').value;
+        const leaveType = document.getElementById('leaveType').value;
+        const leaveReason = document.getElementById('leaveReason').value;
+
+        fetch('@Url.Action("ApplyLeave", "Attendance")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                leaveDate: leaveDate,
+                leaveTypeId: parseInt(leaveType),
+                leaveType: parseInt(leaveType),
+                leaveReason: leaveReason
+            })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✓ Leave applied successfully');
+                    closeLeaveModal();
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+    }
+
+    // Initialize on load
+    window.addEventListener('load', function() {
+        loadTodayStatus();
+    });
+
+    // Close modal on background click
+    document.getElementById('leaveModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeLeaveModal();
+        }
+    });
+</script>

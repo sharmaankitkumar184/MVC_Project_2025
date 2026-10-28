@@ -1,0 +1,295 @@
+@model MVC_Project.Models.Models.Project
+
+@{
+    ViewData["Title"] = "Project Details";
+    int employeeCount = ViewBag.EmployeeCount ?? 0;
+    decimal budgetRemaining = (Model.Budget ?? 0) - (Model.CostIncurred ?? 0);
+}
+
+<div class="dept-details-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1><i class="bi bi-briefcase me-3"></i>@Model.Name</h1>
+            <p>Project overview and information</p>
+        </div>
+        <div class="action-buttons">
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-lg">
+                <i class="bi bi-pencil me-2"></i>Edit Project
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="dept-stat-card projects">
+            <div class="stat-icon">
+                <i class="bi bi-percent"></i>
+            </div>
+            <div class="stat-content">
+                <p class="stat-label">Progress</p>
+                <p class="stat-number">@Model.ProgressPercentage%</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dept-stat-card employees">
+            <div class="stat-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-content">
+                <p class="stat-label">Team Members</p>
+                <p class="stat-number">@employeeCount</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dept-stat-card">
+            <div class="stat-icon">
+                <i class="bi bi-currency-dollar"></i>
+            </div>
+            <div class="stat-content">
+                <p class="stat-label">Budget Remaining</p>
+                <p class="stat-number">@budgetRemaining.ToString("C0")</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Details Card -->
+<div class="dept-detail-card">
+    <div class="detail-section">
+        <!-- Status -->
+        <div class="status-section">
+            <h6 class="section-label"><i class="bi bi-toggle2-on me-2"></i>Status</h6>
+            @if (Model.Status == "Not Started")
+            {
+                <span class="badge bg-secondary">@Model.Status</span>
+            }
+            else if (Model.Status == "In Progress")
+            {
+                <span class="badge bg-primary">@Model.Status</span>
+            }
+            else if (Model.Status == "Completed")
+            {
+                <span class="badge bg-success">@Model.Status</span>
+            }
+            else if (Model.Status == "On Hold")
+            {
+                <span class="badge bg-warning">@Model.Status</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">@Model.Status</span>
+            }
+        </div>
+
+        <!-- Description -->
+        <div class="description-section">
+            <h6 class="section-label"><i class="bi bi-file-text me-2"></i>Description</h6>
+            <p class="section-content">
+                @(string.IsNullOrWhiteSpace(Model.Description) ? "No description provided." : Model.Description)
+            </p>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- Project Code -->
+        <div class="info-row">
+            <div class="info-item">
+                <span class="info-label"><i class="bi bi-code-square me-2"></i>Project Code</span>
+                <span class="info-value">@(string.IsNullOrEmpty(Model.Code) ? "—" : Model.Code)</span>
+            </div>
+        </div>
+
+        <!-- Department -->
+        <div class="info-row">
+            <div class="info-item">
+                <span class="info-label"><i class="bi bi-building me-2"></i>Department</span>
+                <span class="info-value">@(Model.Department?.Name ?? "—")</span>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- Timeline -->
+        <h6 class="section-label mb-3"><i class="bi bi-calendar me-2"></i>Project Timeline</h6>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="timeline-item">
+                    <span class="timeline-label">Start Date</span>
+                    <span class="timeline-value">@Model.StartDate.ToString("dd MMM yyyy")</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="timeline-item">
+                    <span class="timeline-label">End Date</span>
+                    <span class="timeline-value">
+                        @(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("dd MMM yyyy") : "—")
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- Progress Bar -->
+        <h6 class="section-label mb-3"><i class="bi bi-bar-chart me-2"></i>Project Progress</h6>
+        <div class="progress" style="height: 25px;">
+            <div class="progress-bar" role="progressbar" style="width: @(Model.ProgressPercentage)%;" aria-valuenow="@Model.ProgressPercentage" aria-valuemin="0" aria-valuemax="100">
+                @Model.ProgressPercentage%
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- Budget Information -->
+        <h6 class="section-label mb-3"><i class="bi bi-currency-dollar me-2"></i>Financial Information</h6>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="budget-item">
+                    <span class="budget-label">Total Budget</span>
+                    <span class="budget-value">@(Model.Budget?.ToString("C") ?? "—")</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="budget-item">
+                    <span class="budget-label">Cost Incurred</span>
+                    <span class="budget-value">@(Model.CostIncurred?.ToString("C") ?? "—")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="budget-item">
+                    <span class="budget-label">Budget Remaining</span>
+                    <span class="budget-value" style="@(budgetRemaining < 0 ? "color: #dc3545;" : "")">
+                        @budgetRemaining.ToString("C")
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="budget-item">
+                    <span class="budget-label">Spent Percentage</span>
+                    @{
+                        var budgetUsed = Model.Budget > 0
+                            ? (((decimal)(Model.CostIncurred ?? 0) / Model.Budget) * 100)
+                            : 0;
+                    }
+
+                    <span class="budget-value">
+                        @budgetUsed.ToString()%
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- Metadata -->
+        <div class="row metadata-section">
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-calendar-event me-2"></i>Created Date</span>
+                    <span class="metadata-value">@Model.CreatedAt.ToString("dd MMM yyyy")</span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="metadata-item">
+                    <span class="metadata-label"><i class="bi bi-arrow-repeat me-2"></i>Last Updated</span>
+                    <span class="metadata-value">
+                        @(Model.UpdatedAt.HasValue
+                            ? Model.UpdatedAt.Value.ToString("dd MMM yyyy")
+                            : "—")
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.CreatedBy))
+        {
+            <div class="row metadata-section">
+                <div class="col-md-6">
+                    <div class="metadata-item">
+                        <span class="metadata-label"><i class="bi bi-person-circle me-2"></i>Created By</span>
+                        <span class="metadata-value">@Model.CreatedBy</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .info-row {
+        margin-bottom: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+    }
+
+    .info-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .timeline-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .timeline-label {
+        font-size: 0.875rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .timeline-value {
+        font-weight: 600;
+        color: #212529;
+        font-size: 1.1rem;
+    }
+
+    .budget-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+
+    .budget-label {
+        font-size: 0.875rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .budget-value {
+        font-weight: 600;
+        color: #28a745;
+        font-size: 1.1rem;
+    }
+</style>

@@ -1,0 +1,59 @@
+@using MVC_Project.Models.ViewModel
+@using MVC_Project.Models.Enums
+@model List<AttendanceViewModel>
+
+<link rel="stylesheet" href="~/css/Attendance.css" asp-append-version="true" />
+
+<div class="attendance-list">
+    <div class="attendance-list-header">
+        <div>Date</div>
+        <div>Punch In / Out</div>
+        <div>Working Hours</div>
+        <div>Status</div>
+        <div>Leave Type</div>
+        <div>Action</div>
+    </div>
+
+    <div class="attendance-list-body">
+        @if (Model.Count == 0)
+        {
+            <div class="empty-state">
+                <p style="font-size: 1.1rem; margin: 0;">No attendance records found</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var record in Model)
+            {
+                var badgeClass = record.Status switch
+                {
+                    AttendanceStatus.Present => "present",
+                    AttendanceStatus.Absent => "absent",
+                    AttendanceStatus.Leave => "leave",
+                    AttendanceStatus.OnAnnualLeave => "leave",
+                    AttendanceStatus.OnCasual => "leave",
+                    AttendanceStatus.OnSickLeave => "leave",
+                    AttendanceStatus.HalfDay => "halfday",
+                    AttendanceStatus.WeeklyOff => "weeklyoff",
+                    _ => ""
+                };
+
+                <div class="attendance-list-row">
+                    <div class="date-cell">@record.AttendanceDate.ToString("dd MMM yyyy")</div>
+                    <div class="time-cell">
+                        @record.PunchInTimeString<br/>
+                        @record.PunchOutTimeString
+                    </div>
+                    <div class="time-cell">@record.WorkingHoursString</div>
+                    <div>
+                        <span class="status-badge @badgeClass">@record.StatusDisplayName</span>
+                    </div>
+                    <div>@(record.LeaveType?.ToString() ?? "—")</div>
+                    <div>
+                        <a href="javascript:void(0)" class="action-btn" onclick="showDetails(@record.Id)">View</a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

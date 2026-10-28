@@ -1,214 +1,301 @@
 ﻿@using MVC_Project.Models.ViewModel
 @model EmployeeProfileViewModel
 @{
+    <link rel="stylesheet" href="~/css/Profile.css" asp-append-version="true" />
     ViewData["Title"] = "My Profile";
 }
 
-<div class="container mt-4">
 
-    @* Page-level TempData alerts shown at top of MyProfile *@
+<div class="container-fluid py-4">
+
+    @* Alerts *@
     @{
         var success = TempData["Success"] ?? TempData["SuccessMessage"];
         var error = TempData["Error"] ?? TempData["ErrorMessage"];
     }
+
     @if (success != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @success
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert-custom success">
+            <span>✓</span>
+            <span>@success</span>
         </div>
     }
-    else if (error != null)
+
+    @if (error != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @error
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert-custom error">
+            <span>✕</span>
+            <span>@error</span>
         </div>
     }
 
-    <!-- HEADER SECTION -->
-    <div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
         <div class="row align-items-center">
-            <form asp-action="UploadProfileImage" method="post" enctype="multipart/form-data" id="profileImageForm">
-
-            <!-- Profile Image -->
-            <div class="col-md-3 text-center position-relative">
-
-                @{ var cacheBuster = TempData["ProfileImageCacheBuster"] as string; }
-                <img src="@(string.IsNullOrEmpty(Model.ProfileImagePath)
-                             ? Url.Content("~/images/default-profile.png")
-                             : Url.Content(Model.ProfileImagePath) + (cacheBuster != null ? "?v=" + cacheBuster : String.Empty))"
-                     class="rounded-circle shadow profile-img"
-                     width="140"
-                     height="140" />
-
-                    <!-- Edit Icon -->
-                    <button type="button"
-                            class="btn btn-primary btn-sm position-absolute edit-img-btn"
-                            onclick="openFileInput()">
-                        ✏
-                    </button>
-
-                    <!-- Hidden File Input -->
-                    <input type="file"
-                           name="ProfileImageFile"
-                           id="profileImageInput"
-                           accept="image/*"
-                           style="display:none"
-                           onchange="uploadImage()" />
-
-                <div class="mt-3">
-                    <a asp-action="EditProfile" class="btn btn-primary btn-sm px-4">
-                        Edit Profile
-                    </a>
-                </div>
-
-            </div>
-            </form>
-            <!-- Name & Stats -->
-            <div class="col-md-9">
-                <h3 class="fw-bold mb-1">@Model.FullName</h3>
-                <p class="text-muted mb-3">@Model.Designation</p>
-
-                <div class="d-flex gap-3 flex-wrap">
-
-                    <span class="badge bg-light text-dark px-4 py-2 shadow-sm">
-                        Activities: @Model.Activities
-                    </span>
-
-                    <span class="badge bg-light text-dark px-4 py-2 shadow-sm">
-                        Department: @Model.DepartmentName
-                    </span>
-
-                    <span class="badge bg-light text-dark px-4 py-2 shadow-sm">
-                        Role: @Model.Role
-                    </span>
-
+            <div class="col-md-auto text-center">
+                <div class="profile-image-wrapper">
+                    <img src="@(string.IsNullOrEmpty(Model.ProfileImagePath)
+                                 ? Url.Content("~/images/default-profile.png")
+                                 : Url.Content(Model.ProfileImagePath))"
+                         alt="@Model.FullName"
+                         class="profile-image" />
+                    <form asp-action="UploadProfileImage" method="post" enctype="multipart/form-data" id="profileImageForm" style="display: inline;">
+                        <button type="button" class="profile-edit-btn" onclick="document.getElementById('profileImageInput').click(); return false;">
+                            📷
+                        </button>
+                        <input type="file" name="ProfileImageFile" id="profileImageInput" accept="image/*" style="display:none" onchange="document.getElementById('profileImageForm').submit();" />
+                    </form>
                 </div>
             </div>
 
+            <div class="col-md profile-info-main">
+                <h1 class="profile-name">@Model.FullName</h1>
+                <p class="profile-designation">@Model.Designation</p>
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-text">
+                            <span class="stat-label">Activities</span>
+                            <span class="stat-value">@Model.Activities</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-text">
+                            <span class="stat-label">Experience</span>
+                            <span class="stat-value">@Model.ExperienceYears yrs</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-text">
+                            <span class="stat-label">Department</span>
+                            <span class="stat-value">@Model.DepartmentName</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <a href="@Url.Action("EditProfile")" class="btn-action">✏️ Edit Profile</a>
+                    <a href="@Url.Action("DownloadProfileData")" class="btn-action">⬇️ Download Data</a>
+                    <button type="button" class="btn-action" onclick="printProfile()">🖨️ Print</button>
+                </div>
+
+                <div class="profile-completion">
+                    <p style="margin-bottom: 0.8rem; font-size: 0.9rem;">Profile Completion</p>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress" style="flex: 1;">
+                            <div class="progress-bar" style="width: @(Model.IsProfileComplete ? "100" : "75")%"></div>
+                        </div>
+                        <span style="font-size: 0.9rem;">@(Model.IsProfileComplete ? "100%" : "75%")</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- INFO CARDS -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card">
+                <div class="card-title">
+                    <div class="card-title-icon">👤</div>
+                    Status
+                </div>
+                <div class="badge-status">
+                    <span>●</span> @Model.EmploymentStatus
+                </div>
+            </div>
+        </div>
 
-    <!-- TABS CARD -->
-    <div class="card shadow-sm border-0 rounded-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card">
+                <div class="card-title">
+                    <div class="card-title-icon">📅</div>
+                    Joining Date
+                </div>
+                <p class="info-value">@Model.JoiningDate</p>
+            </div>
+        </div>
 
-        <!-- Nav Tabs -->
-        <ul class="nav nav-tabs profile-tabs px-3 pt-3" id="profileTabs" role="tablist">
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card">
+                <div class="card-title">
+                    <div class="card-title-icon">🎯</div>
+                    Projects
+                </div>
+                <p class="info-value">@Model.ProjectName</p>
+            </div>
+        </div>
 
+        <div class="col-md-6 col-lg-3">
+            <div class="info-card">
+                <div class="card-title">
+                    <div class="card-title-icon">⏱️</div>
+                    Time Zone
+                </div>
+                <p class="info-value">@Model.TimeZone</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETAILED INFORMATION TABS -->
+    <div class="info-card">
+        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active"
-                        id="details-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#details"
-                        type="button"
-                        role="tab">
-                    Employee Details
+                <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
+                    📋 Employee Details
                 </button>
             </li>
-
             <li class="nav-item" role="presentation">
-                <button class="nav-link"
-                        id="payroll-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#payroll"
-                        type="button"
-                        role="tab">
-                    Payroll
+                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab">
+                    📞 Contact Information
                 </button>
             </li>
-
             <li class="nav-item" role="presentation">
-                <button class="nav-link"
-                        id="leaves-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#leaves"
-                        type="button"
-                        role="tab">
-                    Leaves
+                <button class="nav-link" id="organization-tab" data-bs-toggle="tab" data-bs-target="#organization" type="button" role="tab">
+                    🏢 Organization
                 </button>
             </li>
-
         </ul>
 
         <!-- Tab Content -->
         <div class="tab-content p-4">
-
-            <!-- DETAILS -->
-            <div class="tab-pane fade show active"
-                 id="details"
-                 role="tabpanel">
-
-                <h5 class="fw-semibold mb-3">Basic Information</h5>
-                <hr />
-
-                <div class="row mb-3">
-                    <div class="col-md-4"><strong>Employee Code:</strong> @Model.EmployeeCode</div>
-                    <div class="col-md-4"><strong>Gender:</strong> @Model.Gender</div>
-                    <div class="col-md-4"><strong>Date of Birth:</strong> @Model.DateOfBirth.ToShortDateString()</div>
+            <!-- EMPLOYEE DETAILS TAB -->
+            <div class="tab-pane fade show active" id="details" role="tabpanel">
+                <h5 class="mb-3">Personal Information</h5>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Employee Code</div>
+                        <div class="info-value">@Model.EmployeeCode</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value">@Model.Gender</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Date of Birth</div>
+                        <div class="info-value">@Model.DateOfBirth.ToShortDateString()</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Blood Group</div>
+                        <div class="info-value">@Model.BloodGroup</div>
+                    </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-4"><strong>Department:</strong> @Model.DepartmentName</div>
-                    <div class="col-md-4"><strong>Project:</strong> @(Model.ProjectName ?? "Not Assigned")</div>
-                    <div class="col-md-4"><strong>Manager:</strong> @(Model.ManagerName ?? "Not Assigned")</div>
-                </div>
+                <hr class="my-4">
 
-                <div class="row mb-3">
-                    <div class="col-md-4"><strong>Blood Group:</strong> @Model.BloodGroup</div>
-                    <div class="col-md-4"><strong>Time Zone:</strong> @Model.TimeZone</div>
-                    <div class="col-md-4"><strong>Company:</strong> @Model.CompanyName</div>
+                <h5 class="mb-3">Professional Information</h5>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Designation</div>
+                        <div class="info-value">@Model.Designation</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Department</div>
+                        <div class="info-value">@Model.DepartmentName</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Company</div>
+                        <div class="info-value">@Model.CompanyName</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Skills</div>
+                        <div class="info-value">@Model.SkillsSummary</div>
+                    </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-12"><strong>Address:</strong> @Model.Address</div>
-                </div>
-
             </div>
 
-            <!-- PAYROLL -->
-            <div class="tab-pane fade"
-                 id="payroll"
-                 role="tabpanel">
+            <!-- CONTACT INFORMATION TAB -->
+            <div class="tab-pane fade" id="contact" role="tabpanel">
+                <h5 class="mb-3">Contact Details</h5>
+                <div class="contact-methods">
+                    <a href="mailto:@Model.Email" class="contact-method">
+                        <div class="contact-icon">✉️</div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: rgba(0,0,0,0.6);">Email</div>
+                            <div style="font-weight: 600;">@Model.Email</div>
+                        </div>
+                    </a>
 
-                <h5 class="fw-semibold">Payroll Information</h5>
-                <hr />
-                <p class="text-muted">Payroll module coming soon...</p>
+                    <a href="tel:@Model.PhoneNumber" class="contact-method">
+                        <div class="contact-icon">📱</div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: rgba(0,0,0,0.6);">Phone</div>
+                            <div style="font-weight: 600;">@Model.PhoneNumber</div>
+                        </div>
+                    </a>
 
+                    <div class="contact-method">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: rgba(0,0,0,0.6);">Address</div>
+                            <div style="font-weight: 600;">@Model.Address</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- LEAVES -->
-            <div class="tab-pane fade"
-                 id="leaves"
-                 role="tabpanel">
+            <!-- ORGANIZATION TAB -->
+            <div class="tab-pane fade" id="organization" role="tabpanel">
+                <h5 class="mb-3">Reporting Structure</h5>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Reporting Manager</div>
+                        <div class="info-value">@Model.ReportingManager</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Team Members</div>
+                        <div class="info-value">@Model.TeamMembersCount</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Project</div>
+                        <div class="info-value">@Model.ProjectName</div>
+                    </div>
+                </div>
 
-                <h5 class="fw-semibold">Leave Information</h5>
-                <hr />
-                <p class="text-muted">Leave module coming soon...</p>
+                <hr class="my-4">
 
+                <h5 class="mb-3">Account Information</h5>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Username</div>
+                        <div class="info-value">@Model.Username</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Role</div>
+                        <div class="info-value">@Model.Role</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Date of Registration</div>
+                        <div class="info-value">@Model.DateOfRegister.ToShortDateString()</div>
+                    </div>
+                </div>
             </div>
-
         </div>
+    </div>
 
+    <!-- ACTION BUTTONS -->
+    <div class="btn-group-custom">
+        <a href="@Url.Action("EditProfile")" class="btn-custom btn-primary-custom">
+            ✏️ Edit Profile
+        </a>
+        <a href="@Url.Action("DownloadProfileData")" class="btn-custom btn-primary-custom">
+            ⬇️ Download Profile Data
+        </a>
+        <a href="@Url.Action("Dashboard", "EmployeeDashboard")" class="btn-custom btn-secondary-custom">
+            ← Back to Dashboard
+        </a>
     </div>
 
 </div>
 
-<script>
-
-    function openFileInput() {
-        document.getElementById("profileImageInput").click();
+<script type="text/javascript">
+    function printProfile() {
+        window.print();
     }
-
-    function uploadImage() {
-        document.getElementById("profileImageForm").submit();
-    }
-
 </script>
-
-@if (TempData["Success"] != null) {
-  <div class="alert alert-success"> @TempData["Success"] </div>
-} else if (TempData["Error"] != null) {
-  <div class="alert alert-danger"> @TempData["Error"] </div>
-}

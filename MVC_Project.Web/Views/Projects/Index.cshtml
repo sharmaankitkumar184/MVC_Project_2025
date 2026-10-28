@@ -1,0 +1,136 @@
+@model IQueryable<MVC_Project.Models.Models.Project>
+
+@{
+    ViewData["Title"] = "Project Management";
+}
+
+<!-- Success Message -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="dept-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-briefcase me-3"></i>Project Management</h1>
+            <p>Manage and track your organization's projects</p>
+        </div>
+        <a asp-action="Create" class="btn btn-create-department">
+            <i class="bi bi-plus-circle me-2"></i>Add New Project
+        </a>
+    </div>
+</div>
+
+<div class="dept-table-card">
+    <div class="table-responsive">
+        <table class="table dept-table mb-0">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-tag"></i> Project Name</th>
+                    <th><i class="bi bi-code-square"></i> Code</th>
+                    <th><i class="bi bi-building"></i> Department</th>
+                    <th><i class="bi bi-calendar"></i> Start Date</th>
+                    <th><i class="bi bi-percent"></i> Progress</th>
+                    <th><i class="bi bi-toggle2-on"></i> Status</th>
+                    <th style="text-align: center;"><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var project in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="dept-name">
+                                    <i class="bi bi-briefcase"></i>
+                                    <strong>@project.Name</strong>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-info">@(string.IsNullOrEmpty(project.Code) ? "—" : project.Code)</span>
+                            </td>
+
+                            <td>
+                                <span class="text-muted">@(project.Department?.Name ?? "—")</span>
+                            </td>
+
+                            <td>
+                                <small class="text-muted">@project.StartDate.ToString("dd MMM yyyy")</small>
+                            </td>
+
+                            <td>
+                                <div class="progress-bar-inline">
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" role="progressbar" style="width: @(project.ProgressPercentage)%;" aria-valuenow="@project.ProgressPercentage" aria-valuemin="0" aria-valuemax="100">
+                                            @project.ProgressPercentage%
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                @if (project.Status == "Not Started")
+                                {
+                                    <span class="badge bg-secondary">@project.Status</span>
+                                }
+                                else if (project.Status == "In Progress")
+                                {
+                                    <span class="badge bg-primary">@project.Status</span>
+                                }
+                                else if (project.Status == "Completed")
+                                {
+                                    <span class="badge bg-success">@project.Status</span>
+                                }
+                                else if (project.Status == "On Hold")
+                                {
+                                    <span class="badge bg-warning">@project.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">@project.Status</span>
+                                }
+                            </td>
+
+                            <td style="text-align: center;">
+                                <div class="dept-action-buttons">
+                                    <a asp-action="Edit" asp-route-id="@project.Id" class="btn btn-icon-edit" title="Edit Project">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@project.Id" class="btn btn-icon-details" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                            <p class="mt-2">No projects found</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.classList.add('fade');
+            setTimeout(() => alert.remove(), 4000);
+        }
+    }, 100);
+</script>
