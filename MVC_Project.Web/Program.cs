@@ -18,6 +18,8 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<HomeDashboardRepository>();
 builder.Services.AddTransient<ISalaryRepository, SalaryRepository>();
 builder.Services.AddTransient<IBenchRepository, BenchRepository>();
+builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
+builder.Services.AddTransient<IAttendanceRepository, AttendanceRepository>();
 
 builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>

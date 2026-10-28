@@ -61,6 +61,79 @@ namespace MVC_Project.Services.Migrations
                     b.ToTable("Addresses");
                 });
 
+            modelBuilder.Entity("MVC_Project.Models.Models.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApprovalRemark")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("ApprovedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ApprovedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("AttendanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeviceCheckIn")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeviceCheckOut")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LeaveReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("LeaveType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LocationCheckIn")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LocationCheckOut")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<TimeSpan?>("PunchInTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan?>("PunchOutTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId", "AttendanceDate")
+                        .IsUnique();
+
+                    b.ToTable("Attendances");
+                });
+
             modelBuilder.Entity("MVC_Project.Models.Models.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -241,7 +314,7 @@ namespace MVC_Project.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -249,6 +322,60 @@ namespace MVC_Project.Services.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("MVC_Project.Models.Models.PunchSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttendanceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BreakReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeviceCheckIn")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DeviceCheckOut")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LocationCheckIn")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LocationCheckOut")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("PunchInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PunchOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SessionNumber")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttendanceId", "SessionNumber")
+                        .IsUnique();
+
+                    b.ToTable("PunchSessions");
                 });
 
             modelBuilder.Entity("MVC_Project.Models.Models.Salaries", b =>
@@ -345,16 +472,27 @@ namespace MVC_Project.Services.Migrations
                         {
                             Id = 555,
                             AddressId = 1,
-                            DateOfRegister = new DateTime(2026, 4, 22, 12, 11, 53, 953, DateTimeKind.Local).AddTicks(3656),
+                            DateOfRegister = new DateTime(2026, 4, 28, 16, 23, 31, 582, DateTimeKind.Local).AddTicks(255),
                             Email = "admin@orgmaster.com",
                             FullName = "OrgMaster",
-                            PasswordHash = "$2a$11$mQ7Zzx7vYk7jtDEQqGEz/ukRdyMejaS9Ig2tudR.jMx9tN.mWY3Lq",
+                            PasswordHash = "$2a$11$nEk7oLHbY/9kPcorTQx/vOKro8xFNgH1YPuMI28lzktuu.YW9KVeG",
                             PasswordResetToken = "",
                             PhoneNumber = "9097920260",
                             Role = 1,
-                            UpdatedAt = new DateTime(2026, 4, 22, 6, 41, 53, 735, DateTimeKind.Utc).AddTicks(8840),
+                            UpdatedAt = new DateTime(2026, 4, 28, 10, 53, 31, 435, DateTimeKind.Utc).AddTicks(6562),
                             Username = "OM3355"
                         });
+                });
+
+            modelBuilder.Entity("MVC_Project.Models.Models.Attendance", b =>
+                {
+                    b.HasOne("MVC_Project.Models.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("MVC_Project.Models.Models.Employee", b =>
@@ -403,6 +541,17 @@ namespace MVC_Project.Services.Migrations
                     b.Navigation("Department");
                 });
 
+            modelBuilder.Entity("MVC_Project.Models.Models.PunchSession", b =>
+                {
+                    b.HasOne("MVC_Project.Models.Models.Attendance", "Attendance")
+                        .WithMany("PunchSessions")
+                        .HasForeignKey("AttendanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Attendance");
+                });
+
             modelBuilder.Entity("MVC_Project.Models.Models.Salaries", b =>
                 {
                     b.HasOne("MVC_Project.Models.Models.Employee", "Employee")
@@ -430,6 +579,11 @@ namespace MVC_Project.Services.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("MVC_Project.Models.Models.Attendance", b =>
+                {
+                    b.Navigation("PunchSessions");
                 });
 
             modelBuilder.Entity("MVC_Project.Models.Models.Department", b =>

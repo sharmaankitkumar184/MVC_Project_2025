@@ -1,0 +1,105 @@
+@using MVC_Project.Models.ViewModel
+@model EmployeeProfileViewModel
+@{
+    <link rel="stylesheet" href="~/css/Profile.css" asp-append-version="true" />
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container-fluid py-4">
+    <div class="edit-header">
+        <h1>Edit Your Profile</h1>
+        <p>Update your personal and professional information</p>
+    </div>
+
+    <form method="post" asp-action="EditProfile" enctype="multipart/form-data" id="editProfileForm">
+
+        <div class="form-card">
+            <div class="form-section-title">
+                <div class="form-section-icon">📷</div>
+                Profile Picture
+            </div>
+
+            <div class="profile-image-edit">
+                <img src="@(string.IsNullOrEmpty(Model.ProfileImagePath) ? Url.Content("~/images/default-profile.png") : Url.Content(Model.ProfileImagePath))" alt="Profile" class="profile-image-preview" />
+                <label for="profileImageInput" class="btn-upload-image">📤 Change Picture</label>
+                <input type="file" id="profileImageInput" name="ProfileImageFile" accept="image/*" style="display:none" onchange="previewImage(this)" />
+                <p class="help-text">Allowed formats: JPG, PNG, GIF (Max 5MB)</p>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div class="form-section-title">
+                <div class="form-section-icon">👤</div>
+                Personal Information
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="FullName" value="@Model.FullName" required class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="Email" value="@Model.Email" required class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="PhoneNumber" value="@Model.PhoneNumber" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div class="form-section-title">
+                <div class="form-section-icon">📍</div>
+                Contact Information
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="Address" rows="3" class="form-control">@Model.Address</textarea>
+                <p class="help-text">Include street, city, and state</p>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div class="form-section-title">
+                <div class="form-section-icon">🔐</div>
+                Account Information (Read-Only)
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" value="@Model.Username" class="form-control" disabled />
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <input type="text" id="role" value="@Model.Role" class="form-control" disabled />
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-custom btn-primary-custom">💾 Save Changes</button>
+            <a asp-action="MyProfile" class="btn-custom btn-secondary-custom">✕ Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function previewImage(input) {
+        var preview = document.querySelector('.profile-image-preview');
+        var file = input.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

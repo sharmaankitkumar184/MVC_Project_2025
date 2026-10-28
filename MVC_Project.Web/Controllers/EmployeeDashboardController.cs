@@ -36,35 +36,59 @@ namespace MVC_Project.Web.Controllers
             var employeeDetails = await _emprepo.GetEmployeeByUserId(userId);
             var userDetails = await _userRepo.GetUserDetailsByUserIdAsync(userId);
 
-            if (employeeDetails == null || userDetails ==null)
+            if (employeeDetails == null || userDetails == null)
                 return NotFound();
+
+            // Calculate experience years from CreatedAt
+            int experienceYears = DateTime.Now.Year - employeeDetails.CreatedAt.Year;
+
+            // Check if profile is complete
+            bool isProfileComplete = !string.IsNullOrEmpty(employeeDetails.Name) &&
+                                     !string.IsNullOrEmpty(employeeDetails.Email) &&
+                                     !string.IsNullOrEmpty(employeeDetails.Phone) &&
+                                     !string.IsNullOrEmpty(employeeDetails.ProfileImagePath) &&
+                                     userDetails.Address != null;
 
             var model = new EmployeeProfileViewModel
             {
-                // ensure profile image path is set so view shows uploaded image
+                // Profile Image
                 ProfileImagePath = string.IsNullOrEmpty(employeeDetails.ProfileImagePath)
                     ? "/images/default-profile.png"
                     : employeeDetails.ProfileImagePath,
+
+                // Account Information
                 FullName = employeeDetails.Name,
                 Email = employeeDetails.Email,
                 Username = userDetails.Username,
                 Role = userDetails.Role.ToString(),
                 DateOfRegister = userDetails.DateOfRegister,
                 PhoneNumber = userDetails.PhoneNumber,
+
+                // Employee Information
                 Designation = employeeDetails.Designation.ToString(),
-                EmployeeCode= employeeDetails.EmployeeCode,
+                EmployeeCode = employeeDetails.EmployeeCode,
                 Gender = employeeDetails.Gender.ToString(),
-                DateOfBirth =employeeDetails.DateOfBirth,
-                DepartmentName =employeeDetails.Department.Name,
+                DateOfBirth = employeeDetails.DateOfBirth,
+                DepartmentName = employeeDetails.Department?.Name ?? "N/A",
                 ProjectName = "FMG",
-                ManagerName ="Manager",
-                Address = (userDetails.Address.Street + "," + userDetails.Address.City + "," + userDetails.Address.State).ToString(),
-                BloodGroup=employeeDetails.BloodGroup,
-                TimeZone=employeeDetails.TimeZone,
-                CompanyName=employeeDetails.CompanyName,
-                //Activities=employeeDetails?Activities,
+                ManagerName = employeeDetails.Manager?.Name ?? "Not Assigned",
+                Address = $"{userDetails.Address?.Street ?? "N/A"}, {userDetails.Address?.City ?? "N/A"}, {userDetails.Address?.State ?? "N/A"}",
 
+                // Additional Information
+                BloodGroup = employeeDetails.BloodGroup ?? "N/A",
+                TimeZone = employeeDetails.TimeZone ?? "UTC",
+                CompanyName = employeeDetails.CompanyName ?? "N/A",
 
+                // Enhanced Fields
+                JoiningDate = employeeDetails.CreatedAt.ToShortDateString(),
+                ExperienceYears = Math.Max(0, experienceYears),
+                EmploymentStatus = "Active",
+                SkillsSummary = "Technical Professional",
+                TeamMembersCount = (employeeDetails.TeamMembers?.Count ?? 0).ToString(),
+                ReportingManager = employeeDetails.Manager?.Name ?? "N/A",
+                LastUpdated = DateTime.Now,
+                IsProfileComplete = isProfileComplete,
+                Activities = employeeDetails.Activities ?? 0
             };
 
             return View(model);
@@ -120,6 +144,71 @@ namespace MVC_Project.Web.Controllers
 
             return RedirectToAction("MyProfile");
         }
-    }
 
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            int userId = GetLoggedInUserId();
+            var employeeDetails = await _emprepo.GetEmployeeByUserId(userId);
+            var userDetails = await _userRepo.GetUserDetailsByUserIdAsync(userId);
+
+            if (employeeDetails == null || userDetails == null)
+                return NotFound();
+
+            var model = new EmployeeProfileViewModel
+            {
+                ProfileImagePath = string.IsNullOrEmpty(employeeDetails.ProfileImagePath)
+                    ? "/images/default-profile.png"
+                    : employeeDetails.ProfileImagePath,
+                FullName = employeeDetails.Name,
+                Email = employeeDetails.Email,
+                Username = userDetails.Username,
+                PhoneNumber = userDetails.PhoneNumber,
+                Address = $"{userDetails.Address?.Street ?? ""}, {userDetails.Address?.City ?? ""}, {userDetails.Address?.State ?? ""}",
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadProfileData()
+        {
+            int userId = GetLoggedInUserId();
+            var employeeDetails = await _emprepo.GetEmployeeByUserId(userId);
+            var userDetails = await _userRepo.GetUserDetailsByUserIdAsync(userId);
+
+            if (employeeDetails == null || userDetails == null)
+                return NotFound();
+
+            var profileData = new
+            {
+                employeeDetails.Name,
+                employeeDetails.Email,
+                employeeDetails.EmployeeCode,
+                userDetails.Username,
+                employeeDetails.Designation,
+                Department = employeeDetails.Department?.Name,
+                ExportDate = DateTime.Now
+            };
+
+            var json = System.Text.Json.JsonSerializer.Serialize(profileData, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(json);
+
+            return File(data, "application/json", $"Profile_{employeeDetails.EmployeeCode}.json");
+        }
+
+        [HttpGet]
+        public IActionResult GetProfileStats()
+        {
+            // This can be expanded to fetch real statistics
+            var stats = new
+            {
+                totalActivities = 12,
+                projectsAssigned = 3,
+                tasksCompleted = 48,
+                performanceRating = 4.5
+            };
+            return Json(stats);
+        }
+    }
 }

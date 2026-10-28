@@ -1,0 +1,190 @@
+@model MVC_Project.Models.Models.Project
+
+@{
+    ViewData["Title"] = "Create Project";
+}
+
+<div class="form-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1><i class="bi bi-briefcase-plus me-3"></i>Create New Project</h1>
+            <p>Add a new project to your organization</p>
+        </div>
+    </div>
+</div>
+
+<div class="form-card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Validation Summary -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="validation-alert alert-danger">
+                    <strong><i class="bi bi-exclamation-circle me-2"></i>Validation Error</strong>
+                    @Html.ValidationSummary(false)
+                </div>
+            }
+
+            <!-- Project Information Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-briefcase" style="color: #667eea;"></i>
+                    Project Information
+                </div>
+
+                <!-- Project Name -->
+                <div class="form-group">
+                    <label asp-for="Name"><i class="bi bi-tag me-2"></i>Project Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="e.g., Website Redesign, Mobile App Development" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Project Code -->
+                <div class="form-group">
+                    <label asp-for="Code"><i class="bi bi-code-square me-2"></i>Project Code</label>
+                    <input asp-for="Code" class="form-control" placeholder="e.g., PRJ-001, PROJ-2025-001" />
+                    <span asp-validation-for="Code" class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label asp-for="Description"><i class="bi bi-file-text me-2"></i>Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter project description (optional)"></textarea>
+                    <small class="text-muted">Provide details about the project's objectives and scope</small>
+                </div>
+            </div>
+
+            <!-- Project Dates Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-calendar" style="color: #667eea;"></i>
+                    Project Timeline
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="StartDate"><i class="bi bi-calendar-event me-2"></i>Start Date</label>
+                            <input asp-for="StartDate" class="form-control" type="date" required />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EndDate"><i class="bi bi-calendar-event me-2"></i>End Date</label>
+                            <input asp-for="EndDate" class="form-control" type="date" />
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Details Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-sliders" style="color: #667eea;"></i>
+                    Project Details
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Status"><i class="bi bi-toggle2-on me-2"></i>Status</label>
+                            <select asp-for="Status" class="form-control">
+                                <option value="Not Started">Not Started</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="On Hold">On Hold</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ProgressPercentage"><i class="bi bi-percent me-2"></i>Progress Percentage</label>
+                            <input asp-for="ProgressPercentage" class="form-control" type="number" min="0" max="100" value="0" />
+                            <span asp-validation-for="ProgressPercentage" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Budget"><i class="bi bi-currency-dollar me-2"></i>Budget</label>
+                            <input asp-for="Budget" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                            <span asp-validation-for="Budget" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CostIncurred"><i class="bi bi-cash-coin me-2"></i>Cost Incurred</label>
+                            <input asp-for="CostIncurred" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                            <span asp-validation-for="CostIncurred" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-building" style="color: #667eea;"></i>
+                    Department Assignment
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DepartmentId"><i class="bi bi-building me-2"></i>Select Department</label>
+                    <select asp-for="DepartmentId" class="form-control" required>
+                        <option value="">-- Select Department --</option>
+                        @if (ViewBag.Departments != null)
+                        {
+                            @foreach (var dept in ViewBag.Departments)
+                            {
+                                <option value="@dept.Value">@dept.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Status Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="bi bi-shield-check" style="color: #667eea;"></i>
+                    Visibility
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                        <label asp-for="IsActive" class="form-check-label"><i class="bi bi-toggle2-on me-2"></i>Active Project</label>
+                    </div>
+                    <small class="text-muted d-block mt-2">Check this box if the project is currently active</small>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>Create Project
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

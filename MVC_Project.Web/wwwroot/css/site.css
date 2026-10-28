@@ -1,4 +1,11 @@
+/* ============================================================================
+   1. CSS VARIABLES & THEMING
+   ============================================================================
+   Centralized color palette and theme definitions for dark/light modes
+   ========================================================================== */
+
 :root {
+    /* Navigation bar theme colors */
     --nav-bg-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     --nav-bg-light: linear-gradient(135deg, #ffffff 0%, #f8f4f9 100%);
     --nav-text-dark: #e0e0e0;
@@ -12,6 +19,7 @@
     --dark-dropdown-bg: #2c3e50;
     --light-dropdown-bg: #f9f5f8;
 
+    /* Footer theme colors */
     --footer-bg-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     --footer-bg-light: linear-gradient(135deg, #f8f4f9 0%, #ffffff 100%);
     --footer-text-dark: #b0b0b0;
@@ -21,6 +29,12 @@
     --footer-accent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --footer-accent-light: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
 }
+
+/* ============================================================================
+   2. BASE STYLES
+   ============================================================================
+   Global HTML, body, and container baseline styles
+   ========================================================================== */
 
 html {
     font-size: 14px;
@@ -51,6 +65,14 @@ body.light-mode {
 .container {
     transition: background-color 0.3s ease;
 }
+
+/* End of Base Styles */
+
+/* ============================================================================
+   3. LIGHT MODE THEME OVERRIDES
+   ============================================================================
+   Complete light mode styling for all Bootstrap components and custom classes
+   ========================================================================== */
 
 body.light-mode .card {
     background-color: #ffffff;
@@ -112,8 +134,8 @@ body.light-mode .badge {
 }
 
 body.light-mode .btn-outline-secondary {
-    color: #6c757d;
-    border-color: #6c757d;
+    color: #fff;
+    border-color: #c4d0db;
 }
 
 body.light-mode .btn-outline-secondary:hover {
@@ -192,7 +214,15 @@ body.light-mode a {
 }
 
 body.light-mode a {
-    color: #ff6b6b;
+    color: #764ba2;
+}
+body.light-mode .navbar-toggler {
+    background: #ee5a6f;
+    border: 1px solid #dbe2ef;
+}
+
+body.light-mode .navbar-toggler-icon {
+    filter: invert(18%);
 }
 
 body.light-mode a:hover {
@@ -220,14 +250,14 @@ body.light-mode .btn-secondary {
 }
 
 body.light-mode .btn-primary {
-    background-color: #ff6b6b;
-    border-color: #ff6b6b;
+    background-color: #e0e0e0;
+    border-color: #22406c;
 }
 
-body.light-mode .btn-primary:hover {
-    background-color: #ee5a6f;
-    border-color: #ee5a6f;
-}
+    body.light-mode .btn-primary:hover {
+        background-color: #ffc107;
+        border-color: #22406c;
+    }
 
 body.light-mode .badge-primary {
     background-color: #ff6b6b;
@@ -354,6 +384,14 @@ body.light-mode .detail-box {
     background: #f8f9fa;
     color: #2c3e50;
 }
+
+/* End of Light Mode Theme Overrides */
+
+/* ============================================================================
+   4. BUTTON COMPONENTS
+   ============================================================================
+   Action buttons styling for employee cards, delete actions, and general use
+   ========================================================================== */
 
 /* Employee Card Action Buttons */
 .employee-actions {
@@ -525,6 +563,14 @@ body.light-mode .btn-delete:hover {
     }
 }
 
+/* End of Button Components */
+
+/* ============================================================================
+   5. PAGINATION & UTILITY COMPONENTS
+   ============================================================================
+   Page sizing buttons, pagination, validation, and common utility classes
+   ========================================================================== */
+
 .page-size-button {
     background-color: #f8f9fa;
     color: #2c3e50;
@@ -630,6 +676,7 @@ body.light-mode .page-item.disabled .page-link {
     color: #adb5bd;
 }
 
+/* Validation & Accessibility */
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
@@ -673,6 +720,14 @@ body.light-mode .page-item.disabled .page-link {
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
+
+/* End of Pagination & Utility Components */
+
+/* ============================================================================
+   6. COMMON COMPONENT STYLES
+   ============================================================================
+   Badges, designation badges, profile tabs, detail boxes, and misc components
+   ========================================================================== */
 
 .designation-badge {
     display: inline-flex;
@@ -721,32 +776,6 @@ body.light-mode .page-item.disabled .page-link {
     padding: 6px 10px;
 }
 
-.department-table th {
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-.department-table td {
-    padding: 1rem;
-}
-
-.department-table tbody tr:hover {
-    background-color: #f9fafb;
-}
-
-.description-cell {
-    max-width: 420px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.btn-group .btn {
-    border-radius: 0.5rem;
-}
-
 .detail-box {
     background: #f8fafc;
     border-radius: 0.75rem;
@@ -778,6 +807,14 @@ body.light-mode .page-item.disabled .page-link {
     border-radius: 0.375rem;
     font-size: 0.85rem;
 }
+
+/* End of Common Component Styles */
+
+/* ============================================================================
+   7. EMPLOYEE MANAGEMENT COMPONENTS
+   ============================================================================
+   Employee cards, employee listing, search sections, and employee profile
+   ========================================================================== */
 
 .employee-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -851,6 +888,7 @@ body.light-mode .page-item.disabled .page-link {
     color: white;
 }
 
+/* Employee Card Styling */
 .employee-card {
     border: none;
     border-radius: 12px;
@@ -941,6 +979,14 @@ body.light-mode .page-item.disabled .page-link {
     transform: translateY(-2px);
 }
 
+/* End of Employee Management Components */
+
+/* ============================================================================
+   8. DASHBOARD & KPI COMPONENTS
+   ============================================================================
+   Dashboard header, KPI cards, metrics display, and dashboard statistics
+   ========================================================================== */
+
 .dashboard-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -966,6 +1012,7 @@ body.light-mode .page-item.disabled .page-link {
     margin-bottom: 40px;
 }
 
+/* KPI Card Styling */
 .kpi-card {
     border: none;
     border-radius: 12px;
@@ -1060,6 +1107,19 @@ body.light-mode .page-item.disabled .page-link {
     line-height: 1.2;
 }
 
+body.light-mode .kpi-number { 
+    color: #1565c0 !important; 
+    font-weight: 700; 
+}
+
+/* End of Dashboard & KPI Components */
+
+/* ============================================================================
+   9. SECTION CONTAINERS & EMPLOYEE DASHBOARD CARDS
+   ============================================================================
+   Page section containers, employee dashboard card variants, and layout components
+   ========================================================================== */
+
 .section-container {
     background-color: white;
     border-radius: 12px;
@@ -1087,6 +1147,7 @@ body.light-mode .page-item.disabled .page-link {
     font-size: 0.95rem;
 }
 
+/* Employee Dashboard Card */
 .employee-card-dashboard {
     border: none;
     border-radius: 10px;
@@ -1166,21 +1227,7 @@ body.light-mode .page-item.disabled .page-link {
     background-color: #f8f9fa;
 }
 
-.btn-view-profile {
-    background-color: #667eea;
-    color: white;
-    border: none;
-    width: 100%;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-view-profile:hover {
-    background-color: #764ba2;
-    color: white;
-    transform: translateY(-2px);
-}
-
+/* Projects List Display */
 .projects-list {
     display: flex;
     flex-direction: column;
@@ -1247,6 +1294,14 @@ body.light-mode .page-item.disabled .page-link {
     margin: 0;
     font-size: 1.1rem;
 }
+
+/* End of Section Containers & Employee Dashboard Cards */
+
+/* ============================================================================
+   10. DEPARTMENT MANAGEMENT COMPONENTS
+   ============================================================================
+   Department listing, tables, department detail pages, and department cards
+   ========================================================================== */
 
 .dept-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1425,6 +1480,7 @@ body.light-mode .page-item.disabled .page-link {
 }
 
 .dept-stat-card {
+    background: #7dd6ad;
     border-radius: 10px;
     padding: 25px;
     display: flex;
@@ -1472,19 +1528,11 @@ body.light-mode .page-item.disabled .page-link {
     margin: 0;
 }
 
-.stat-label {
-    color: #495057;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
 
 .stat-number {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: #3b6db6;
 }
 
 .dept-detail-card {
@@ -1968,6 +2016,14 @@ body.light-mode .page-item.disabled .page-link {
     margin: 0;
 }
 
+/* End of Login Page Components */
+
+/* ============================================================================
+   12. NAVBAR & NAVIGATION COMPONENTS
+   ============================================================================
+   Navigation bar, navbar styling, dropdowns, theme toggle, and user menu
+   ========================================================================== */
+
 .custom-navbar {
     background: var(--nav-bg-dark);
     padding: 12px 20px;
@@ -2050,8 +2106,8 @@ body.light-mode .navbar-nav .nav-link {
 }
 
 body.light-mode .navbar-nav .nav-link:hover {
-    color: var(--nav-accent-light) !important;
-    background-color: rgba(255, 107, 107, 0.1);
+    color: #2563eb !important;
+    background-color: rgba(37,99,235,.08);
 }
 
 .navbar-nav .nav-link.active {
@@ -2130,25 +2186,29 @@ body.light-mode .custom-dropdown .dropdown-divider {
     gap: 8px;
 }
 
-.theme-toggle .form-check-input {
-    width: 40px;
-    height: 24px;
-    cursor: pointer;
-    border-radius: 12px;
-    background-color: #495057;
-    border-color: var(--nav-accent);
-    transition: all 0.3s ease;
-}
+    /* =========================================
+   THEME TOGGLE SWITCH
+========================================= */
 
-body.light-mode .theme-toggle .form-check-input {
-    background-color: #e0e0e0;
-    border-color: var(--nav-accent-light);
-}
+    .theme-toggle .form-check-input {
+        width: 60px;
+        height: 32px;
+        border: none;
+        border-radius: 50px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231e3a8a' d='M21 15.5A8.5 8.5 0 0 1 10.5 3a7 7 0 1 0 10.5 12.5z'/%3E%3C/svg%3E");
+        background-size: 22px;
+        background-repeat: no-repeat;
+        background-position: 6px center;
+        transition: .4s ease;
+    }
 
-.theme-toggle .form-check-input:checked {
-    background-color: var(--nav-accent);
-    border-color: var(--nav-accent);
-    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        .theme-toggle .form-check-input:checked {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='5' fill='%231e3a8a'/%3E%3C/svg%3E");
+            background-position: 32px center;
+        }
+
+.theme-toggle .form-check-input:focus {
+    box-shadow: none;
 }
 
 body.light-mode .theme-toggle .form-check-input:checked {
@@ -2311,6 +2371,14 @@ body.light-mode .custom-user-menu .dropdown-divider {
         background: var(--light-dropdown-bg);
     }
 }
+
+/* End of Navbar & Navigation Components */
+
+/* ============================================================================
+   13. FOOTER COMPONENTS
+   ============================================================================
+   Footer styling, footer sections, social links, and footer branding
+   ========================================================================== */
 
 .custom-footer {
     background: var(--footer-bg-dark);
@@ -2693,6 +2761,13 @@ body.light-mode .footer-bottom-text {
 
 body.light-mode .kpi-number, body.light-mode .stat-number { color: #1565c0 !important; font-weight: 700; }
 
+/* End of Footer Components */
+
+/* ============================================================================
+   14. SALARY & PAYROLL MODULE COMPONENTS
+   ============================================================================
+   Salary management, payroll tables, salary forms, and salary details display
+   ========================================================================== */
 
 /* ===== SALARY MODULE STYLING ===== */
 
@@ -2811,7 +2886,7 @@ body.light-mode .btn-create-salary {
 }
 
 .stat-label {
-    color: #6c757d;
+    /*color: #6c757d;*/
     text-transform: uppercase;
     font-size: 0.8rem;
     letter-spacing: 0.05em;
@@ -2822,17 +2897,13 @@ body.light-mode .btn-create-salary {
 .stat-value {
     font-size: 1.65rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: #ffc107;
     line-height: 1.1;
     white-space: nowrap;
 }
 
-body.light-mode .stat-label {
-    color: #6c757d;
-}
-
 body.light-mode .stat-value {
-    color: #2c3e50;
+    color: #ffc107;
 }
 
 .salary-table-card {
@@ -3516,6 +3587,13 @@ body.light-mode .summary-title {
     color: #ff6b6b;
 }
 
+/* End of Salary & Payroll Module Components */
+
+/* ============================================================================
+   15. DELETE PAGE & SPECIAL COMPONENTS
+   ============================================================================
+   Delete confirmation pages, warning banners, and special action pages
+   ========================================================================== */
 
 /* ===== DELETE PAGE FIX ===== */
 
@@ -3616,6 +3694,8 @@ body.light-mode .summary-title {
     border-radius: 8px;
     font-weight: 600;
 }
+
+/* End of Delete Page & Special Components */
 
 /*Bench design*/
 
